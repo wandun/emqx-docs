@@ -166,7 +166,7 @@ jobs:
             --templateOptions.headerTitle 'EMQX ${VERSION} Docs' \
             $(if [ "${lang}" == "zh" ]; then echo "--templateOptions.langZH \"zh\""; fi)
 
-          redocly build-docs redoc/ee-${lang}.json -t template-emqx-enterprise.hbs -o docs/.vitepress/dist/${lang}/enterprise/${VERSION}/admin/api-docs.html \
+          redocly build-docs redoc/ee-${lang}.json -t redoc/template-emqx-enterprise.hbs -o docs/.vitepress/dist/${lang}/enterprise/${VERSION}/admin/api-docs.html \
             --config=redoc/redocly.yaml \
             --templateOptions.title "EMQX Enterprise ${VERSION} API Documentation" \
             --templateOptions.description "EMQX Enterprise ${VERSION} API Documentation" \
