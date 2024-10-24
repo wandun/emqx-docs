@@ -36,6 +36,19 @@
 
   > **解决方法：** 通过 Dashboard 调整**最大 Dashboard 记录数**，或将 `log.audit.max_filter_size` 设置为较低的值。随着新事件的记录，问题事件将逐渐从审计日志中清除。
 
+- **`GET /monitor` HTTP API 和 Dashboard 中的指标值失真**
+
+  使用 `GET /monitor` HTTP API 时，该 API 同时也为 Dashboard 提供数据。如果将时间窗口从 1 小时调整为更长的时间范围，可能会导致最近 1 小时内的数据点显示失真。例如，3 个连接可能错误地显示为 9 个或更多。对于过去 1 小时内的数据点，这个问题仅为视觉上的失真。然而，对于超过 1 小时的数据，失真是不可逆的。
+
+  受影响的指标：
+
+  - `disconnected_durable_sessions`
+  - `subscriptions_durable`
+  - `subscriptions`
+  - `topics`
+  - `connections`
+  - `live_connections`
+
 ## e5.8.0
 
 - **节点崩溃竞态条件（始于 5.0，已在 5.8.1 中修复）**

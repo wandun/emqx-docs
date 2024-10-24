@@ -45,9 +45,9 @@
   > **Workaround:**
   > Adjust the **Max Dashboard Record Size** through the Dashboard, or lower the `log.audit.max_filter_size` setting. Over time, problematic events will be cleared from the Audit log as new events are recorded.
 
-- **Distorted gauge values in `GET /monitor` HTTP API and Dashboard**
+- **Distorted Gauge Values in `GET /monitor` HTTP API and Dashboard**
 
-  For fresh data points in the `GET /monitor` HTTP API, which is used in the Dashboard as well, changing the time window from 1 hour to larger windows will distort the values of gauge values.  For example, 3 connections might become 9 or more.  This is only a visual distortion.  For data points older than 1 hour, however, data is irreversibly distorted.
+  When using the `GET /monitor` HTTP API, which also provides data for the Dashboard, changing the time window from 1 hour to a larger time frame may cause fresh data points (collected within the past hour) to appear distorted.  For instance, three connections may incorrectly display as nine or more. This issue is purely visual for data points within the past hour. However, for data older than 1 hour, the distortion is irreversible.
 
   Impacted gauges:
 
