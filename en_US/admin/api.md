@@ -10,15 +10,41 @@ The section introduces how to work with EMQX REST API.
 
 EMQX has version control on the REST API, all API paths from EMQX 5.0.0 start with `/api/v5`.
 
+## HTTP Headers
+
+Most API requests require the `Accept` header to be set to `application/json`, and then the response will be returned in JSON format unless otherwise specified.
+
+## HTTP Response Status Code
+
+EMQX follows the [HTTP Response Status Code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) standard. The possible status codes are as follows:
+
+| Codes | Description                                                  |
+| ----- | ------------------------------------------------------------ |
+| 200   | Request successfully, and the returned JSON data will provide more details |
+| 201   | Created successfully, and the new object will be returned in the Body |
+| 204   | Request successfully. Usually used for delete and update operations, and the returned Body will be empty |
+| 400   | Bad Request. Usually request body or parameter error         |
+| 401   | Unauthorized. API key expires or does not exist.             |
+| 403   | Forbidden. Check if the object is in use or has dependency constraints. |
+| 404   | Not Found. You can refer to the `message` field in the Body to check the reason |
+| 409   | Conflict. The object already exists or the number limit is exceeded |
+| 500   | Internal Server Error. Check the reason in the Body and logs |
+
 ## Authentication
 
-EMQX's REST API uses [HTTP Basic Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication#the_general_http_authentication_framework) with API keys as authentication credentials. Before using the EMQX REST API, you need to create an API key.
+EMQX's REST API supports two main methods for authentication: basic Authentication using API keys and bearer token authentication.
 
-:::tip
-For security reasons, from EMQX 5.0.0 onwards, Dashboard users cannot be used for REST API authentication. Role-based API credentials are a feature of the EMQX Enterprise edition.
+### Basic Authentication Using API Keys
+
+In this method, you use API keys and secret keys as the username and password to authenticate your API requests. EMQX's REST API follows [HTTP Basic Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication#the_general_http_authentication_framework), where these credentials are required. Before using the EMQX REST API, you must create an API key.
+
+::: tip Note
+
+For security reasons, starting from EMQX 5.0.0, you cannot use Dashboard user credentials to authenticate REST API requests. Instead, you need to create and use API keys for authentication. Note that role-based API credentials are available only in the EMQX Enterprise edition.
+
 :::
 
-### Create API Keys
+#### Create API Keys
 
 You can manually create API keys for authentication on the Dashboard by navigating to **System** -> **API Key**. For instructions, see [System - API Keys](../dashboard/system.md#api-keys).
 
@@ -32,9 +58,9 @@ api_key = {
 
 In the specified file, add multiple API keys in the format `{API Key}:{Secret Key}:{?Role}`, separated by new lines:
 
-- API Key: Any string as the key identifier.
-- Secret Key: Use a random string as the secret key.
-- Role (optional): Specify the key's [role](#roles-and-permissions), applicable only in the Enterprise edition.
+- **API Key**: Any string as the key identifier.
+- **Secret Key**: Use a random string as the secret key.
+- **Role (optional)**: Specify the key's [role](#roles-and-permissions), applicable only in the Enterprise edition.
 
 For example:
 
@@ -48,17 +74,19 @@ API keys created this way are valid indefinitely.
 
 Each time EMQX starts, it will add the data set in the file to the API key list. If an API key already exists, its Secret Key and Role will be updated.
 
-### Roles and Permissions
+#### Roles and Permissions (Enterprise Edition)
 
-In the EMQX Enterprise edition, the REST API implements role-based access control. When creating an API key, you can assign one of the following 3 predefined roles:
+In the EMQX Enterprise edition, the REST API implements role-based access control. When creating an API key, you can assign one of the following three predefined roles:
 
 - **Administrator**: This role can access all resources and is the default value if no role is specified. The corresponding role identifier is `administrator`.
 - **Viewer**: This role can only view resources and data, corresponding to all GET requests in the REST API. The corresponding role identifier is `viewer`.
 - **Publisher**: Designed specifically for MQTT message publishing, this role is limited to accessing APIs related to message publishing. The corresponding role identifier is `publisher`.
 
-### Authentication Method
+#### Authentication Method Using API Keys
 
-You can use the generated API Key and Secret Key as the username and password for Basic authentication:
+Once you have your API key and secret key, you can use them to authenticate your requests. The API key is used as the username and the secret key as the password for Basic Authentication.
+
+Examples in different languages:
 
 :::: tabs type:card
 :::tab cURL
@@ -203,25 +231,63 @@ axios
 :::
 ::::
 
-## HTTP Headers
+### Authentication Using Bearer Token
 
-Unless otherwise specified, most API requests require the `Accept` header to be set to `application/json`, and then the response will be returned in JSON format.
+Alternatively, you can use bearer tokens for programmatic and secure authentication. Here's how to obtain and use a bearer token.
 
-## HTTP Response Status Code
+#### Obtain a Bearer Token
 
-EMQX follows the [HTTP Response Status Code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) standard, and the possible status codes are as follows:
+To obtain a bearer token programmatically for the EMQX REST API, follow these steps:
 
-| Codes | Description                                                  |
-| ----- | ------------------------------------------------------------ |
-| 200   | Request successfully, and the returned JSON data will provide more details |
-| 201   | Created successfully, and the new object will be returned in the Body |
-| 204   | Request successfully. Usually used for delete and update operations, and the returned Body will be empty |
-| 400   | Bad Request. Usually request body or parameter error         |
-| 401   | Unauthorized. API key expires or does not exist.             |
-| 403   | Forbidden. Check if the object is in use or has dependency constraints. |
-| 404   | Not Found. You can refer to the `message` field in the Body to check the reason |
-| 409   | Conflict. The object already exists or the number limit is exceeded |
-| 500   | Internal Server Error. Check the reason in the Body and logs |
+##### Use cURL
+
+You can use the following `curl` command to request a bearer token:
+
+```bash
+curl -s -X POST http://your-emqx-address:8483/api/v5/login \
+--header "Content-Type: application/json" \
+--data '{"username": "admin", "password": "yourpassword"}' \
+| grep -o '"token":"[^"]*' | grep -o '[^"]*$'
+```
+
+- Replace `your-emqx-address` with the actual address or IP of your EMQX node.
+- Replace `"admin"` and `"yourpassword"` with the appropriate Dashboard username and password.
+
+::: tip
+
+The username and password used for this authentication process are the same as your EMQX Dashboard credentials.
+
+:::
+
+##### Use a Shell Script
+
+Alternatively, you can use this shell script to prompt for the username and password, then retrieve the bearer token:
+
+```bash
+#!/bin/bash
+
+echo "Enter Dashboard username:"
+read username
+
+echo "Enter Dashboard password:"
+read -s password  # Use -s to hide the input for better security
+
+token=$(curl -s --json "{\"username\": \"${username}\", \"password\": \"${password}\"}" \
+http://your-emqx-address:8483/api/v5/login 2> /dev/null | jq -r '.token')
+
+echo "Bearer token: ${token}"
+```
+
+- Replace `your-emqx-address` with actual address or IP of your EMQX node.
+- The `jq` tool is used here to parse the JSON response and extract the token.
+
+#### Use Bearer Token for Authentication
+
+Once you have the bearer token, include it in the `Authorization` header of your API requests, like this:
+
+```bash
+--header "Authorization: Bearer <your-token>"
+```
 
 ## Pagination
 

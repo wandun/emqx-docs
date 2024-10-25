@@ -10,16 +10,39 @@ EMQX 服务启动后，您可以访问 [http://localhost:18083/api-docs/index.ht
 
 EMQX 在 REST API 上做了版本控制，EMQX 5.0.0 以后的所有 API 调用均以 `/api/v5` 开头。
 
+## HTTP 请求头
+
+除非有特殊说明，绝大多数 API 要求请求头中 `Accept` 值设置为 `application/json`，响应内容将以 JSON 格式返回。
+
+## HTTP 响应状态码
+
+EMQX 遵循 [HTTP 响应状态码](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)标准，可能的状态码如下：
+
+| 状态码 | 描述                                                         |
+| ------ | ------------------------------------------------------------ |
+| 200    | 请求成功，返回的 JSON 数据将提供更多信息                     |
+| 201    | 创建成功，新建的对象将在 Body 中返回                         |
+| 204    | 请求成功，常用于删除与更新操作，Body 不会返回内容            |
+| 400    | 请求无效，例如请求体或参数错误                               |
+| 401    | 未通过服务端认证，API 密钥过期或不存在时可能会发生           |
+| 403    | 无权操作，检查操作对象是否正在使用或有依赖约束               |
+| 404    | 找不到请求路径或请求的对象不存在，可参照 Body 中的 `message` 字段判断具体原因 |
+| 409    | 请求的资源已存在或数量超过限制                               |
+| 500    | 服务端处理请求时发生内部错误，可通过 Body 返回内容与日志判断具体原因 |
+
 ## 认证
 
-EMQX 的 REST API 使用 [HTTP Basic 认证](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Authentication#%E9%80%9A%E7%94%A8%E7%9A%84_http_%E8%AE%A4%E8%AF%81%E6%A1%86%E6%9E%B6) 携带 API 密钥作为认证凭据。在开始使用 EMQX REST API 之前，您需要创建 API 密钥。
+EMQX 的 REST API 支持两种主要的认证方法：使用 API 密钥的基本认证和 Bearer Token 认证。
 
-::: tip
-出于安全考虑，从 EMQX 5.0.0 开始 Dashboard 用户无法用于 REST API 认证。
-API 凭证区分角色是 EMQX 企业版中的功能。
+### 使用 API 密钥的基本认证
+
+在这种方法中，您通过使用 API 密钥和密钥作为用户名和密码来对 API 请求进行身份验证。EMQX 的 REST API 基于 HTTP 基本认证框架，要求提供这些凭据。使用 EMQX REST API 之前，您需要先创建一个 API 密钥。
+
+::: tip 注意
+出于安全考虑，从 EMQX 5.0.0 开始 Dashboard 用户凭据无法用于 REST API 认证。您需要创建并使用 API 密钥进行认证。请注意，基于角色的 API 凭据仅适用于 EMQX 企业版。
 :::
 
-### 创建 API 密钥
+#### 创建 API 密钥
 
 您可以在 Dashboard **系统设置** -> **API 密钥** 页面中手动创建用于认证的 API 密钥，详细操作请参考 [Dashboard - API 密钥](../dashboard/system.md#api-密钥)。
 
@@ -33,9 +56,9 @@ api_key = {
 
 在指定的文件中通过多行分割的 `{API Key}:{Secret Key}:{?Role}` 的格式添加多个 API 密钥：
 
-- API Key：任意字符串作为密钥标识。
-- Secret Key：使用随机字符串作为密钥。
-- Role （可选）：指定密钥的[角色](#角色与权限)，仅适用于企业版。
+- **API Key**：任意字符串作为密钥标识。
+- **Secret Key**：使用随机字符串作为密钥。
+- **Role （可选）**：指定密钥的[角色](#角色与权限)，仅适用于企业版。
 
 例如：
 
@@ -49,7 +72,7 @@ foo:3CA92E5F-30AB-41F5-B3E6-8D7E213BE97E:publisher
 
 每次 EMQX 启动时，会将文件中设置的数据将添加到 API 密钥列表中，如果存在相同的 API Key，则将更新其 Secret Key 与 Role。
 
-### 角色与权限
+#### 角色与权限
 
 在 EMQX 企业版中，REST API 实现了基于角色的访问控制，API 密钥创建时，可以分配以下3个预定义的角色：
 
@@ -57,7 +80,7 @@ foo:3CA92E5F-30AB-41F5-B3E6-8D7E213BE97E:publisher
 - **查看者**：此角色只能查看资源和数据，对应于 REST API 中的所有 GET 请求。对应的角色标识为 `viewer`。
 - **发布者**：专门为 MQTT 消息发布定制，此角色仅限于访问与消息发布相关的 API。对应的角色标识为 `publisher`。
 
-### 认证方式
+#### 认证方式
 
 使用生成的 API Key 以及 Secret Key 分别作为 Basic 认证的用户名与密码，请求示例如下：
 
@@ -204,25 +227,63 @@ axios
 :::
 ::::
 
-## HTTP 请求头
+### 使用 Bearer Token 认证
 
-除非有特殊说明，绝大多数 API 要求请求头中 `Accept` 值设置为 `application/json`，响应内容将以 JSON 格式返回。
+或者，您可以使用 Bearer Token 进行编程和安全认证。以下是获取和使用 Bearer Token 的方法。
 
-## HTTP 响应状态码
+#### 获取 Bearer Token
 
-EMQX 遵循 [HTTP 响应状态码](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)标准，可能的状态码如下：
+要为 EMQX REST API 编程获取 Bearer Token，请按以下步骤操作：
 
-| 状态码 | 描述                                                                          |
-| ------ | ----------------------------------------------------------------------------- |
-| 200    | 请求成功，返回的 JSON 数据将提供更多信息                                      |
-| 201    | 创建成功，新建的对象将在 Body 中返回                                          |
-| 204    | 请求成功，常用于删除与更新操作，Body 不会返回内容                             |
-| 400    | 请求无效，例如请求体或参数错误                                                |
-| 401    | 未通过服务端认证，API 密钥过期或不存在时可能会发生                            |
-| 403    | 无权操作，检查操作对象是否正在使用或有依赖约束                                |
-| 404    | 找不到请求路径或请求的对象不存在，可参照 Body 中的 `message` 字段判断具体原因 |
-| 409    | 请求的资源已存在或数量超过限制                                                |
-| 500    | 服务端处理请求时发生内部错误，可通过 Body 返回内容与日志判断具体原因          |
+##### 使用 cURL
+
+您可以使用以下 `curl` 命令来请求 Bearer Token：
+
+```bash
+curl -s -X POST http://your-emqx-address:8483/api/v5/login \
+--header "Content-Type: application/json" \
+--data '{"username": "admin", "password": "yourpassword"}' \
+| grep -o '"token":"[^"]*' | grep -o '[^"]*$'
+```
+
+- 将 `your-emqx-address` 替换为您的 EMQX 节点的实际地址或 IP。
+- 将 `"admin"` 和 `"yourpassword"` 替换为相应的 Dashboard 用户名和密码。
+
+::: tip
+
+此认证过程中使用的用户名和密码与您的 EMQX Dashboard 凭据相同。
+
+:::
+
+##### 使用 Shell 脚本
+
+或者，您可以使用此 Shell 脚本提示输入用户名和密码，然后检索 Bearer Token：
+
+```bash
+#!/bin/bash
+
+echo "Enter Dashboard username:"
+read username
+
+echo "Enter Dashboard password:"
+read -s password  # 使用 -s 隐藏输入以增强安全性
+
+token=$(curl -s --json "{\"username\": \"${username}\", \"password\": \"${password}\"}" \
+http://your-emqx-address:8483/api/v5/login 2> /dev/null | jq -r '.token')
+
+echo "Bearer token: ${token}"
+```
+
+- 将 `your-emqx-address` 替换为您的 EMQX 节点的实际地址或 IP。
+- 此处使用 `jq` 工具解析 JSON 响应并提取 Token。
+
+#### 使用 Bearer Token 进行身份认证
+
+获取 Bearer Token 后，将其包含在您的 API 请求的 `Authorization` 标头中，如下所示：
+
+```bash
+--header "Authorization: Bearer <your-token>"
+```
 
 ## 分页
 
