@@ -50,6 +50,16 @@ EMQX 启动失败时，可以查看 [日志目录](../deploy/install.md#文件�
 
 该日志表示 EMQX 依赖的 Erlang/OTP 中的 `crypto` 应用启动失败，这通常是当前系统安装的 OpenSSL 版本与 EMQX 依赖的 OpenSSL 版本不同，或者当前系统并未安装 OpenSSL 导致的。
 
+::: warning 重要提示
+
+以下解决方案仅供参考示例。
+
+所列源版本是根据当前已知信息选择的，但可能已过时或存在漏洞。
+
+建议直接从操作系统的包管理器中安装 `libcrypto` 以获取最新的安全更新。
+
+:::
+
 :::: tabs
 
 ::: tab Linux
