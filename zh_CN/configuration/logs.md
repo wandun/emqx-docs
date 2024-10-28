@@ -36,8 +36,8 @@ log {
     rotation_size = 50MB
     time_offset = system
     timestamp_format = auto
-    
   }
+}
 ```
 
 其中，
