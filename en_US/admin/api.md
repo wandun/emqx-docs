@@ -233,53 +233,33 @@ axios
 
 ### Authentication Using Bearer Token
 
-Alternatively, you can use bearer tokens for programmatic and secure authentication. Here's how to obtain and use a bearer token.
+As an alternative to API key-based authentication, you can use bearer tokens for secure and programmatic access to the EMQX REST API. To obtain a bearer token, send a request to the login API endpoint as described below.
 
 #### Obtain a Bearer Token
 
-To obtain a bearer token programmatically for the EMQX REST API, follow these steps:
-
-##### Use cURL
-
-You can use the following `curl` command to request a bearer token:
+To request a bearer token, make an HTTP `POST` request to the following login API endpoint:
 
 ```bash
-curl -s -X POST http://your-emqx-address:8483/api/v5/login \
---header "Content-Type: application/json" \
---data '{"username": "admin", "password": "yourpassword"}' \
-| grep -o '"token":"[^"]*' | grep -o '[^"]*$'
+POST http://your-emqx-address:8483/api/v5/login
 ```
 
-- Replace `your-emqx-address` with the actual address or IP of your EMQX node.
-- Replace `"admin"` and `"yourpassword"` with the appropriate Dashboard username and password.
+**Headers:**
 
-::: tip
+- `Content-Type: application/json`
 
-The username and password used for this authentication process are the same as your EMQX Dashboard credentials.
+**Request Body:**
 
-:::
-
-##### Use a Shell Script
-
-Alternatively, you can use this shell script to prompt for the username and password, then retrieve the bearer token:
-
-```bash
-#!/bin/bash
-
-echo "Enter Dashboard username:"
-read username
-
-echo "Enter Dashboard password:"
-read -s password  # Use -s to hide the input for better security
-
-token=$(curl -s --json "{\"username\": \"${username}\", \"password\": \"${password}\"}" \
-http://your-emqx-address:8483/api/v5/login 2> /dev/null | jq -r '.token')
-
-echo "Bearer token: ${token}"
+```json
+{
+  "username": "admin",
+  "password": "yourpassword"
+}
 ```
 
-- Replace `your-emqx-address` with actual address or IP of your EMQX node.
-- The `jq` tool is used here to parse the JSON response and extract the token.
+- Replace `your-emqx-address` with the address or IP of your EMQX node.
+- Replace `"admin"` and `"yourpassword"` with your EMQX Dashboard credentials.
+
+The response will include the bearer token, which you can use to authenticate API requests.
 
 #### Use Bearer Token for Authentication
 

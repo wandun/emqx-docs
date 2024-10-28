@@ -229,53 +229,33 @@ axios
 
 ### 使用 Bearer Token 认证
 
-或者，您可以使用 Bearer Token 进行编程和安全认证。以下是获取和使用 Bearer Token 的方法。
+除了基于 API 密钥的身份验证外，您还可以使用 Bearer Token 来实现对 EMQX REST API 的安全和程序化访问。要获取 Bearer Token，请按照以下说明向登录 API 端点发送请求。
 
 #### 获取 Bearer Token
 
-要为 EMQX REST API 编程获取 Bearer Token，请按以下步骤操作：
-
-##### 使用 cURL
-
-您可以使用以下 `curl` 命令来请求 Bearer Token：
+要请求 Bearer Token，请向以下登录 API 端点发送 HTTP `POST ` 请求：
 
 ```bash
-curl -s -X POST http://your-emqx-address:8483/api/v5/login \
---header "Content-Type: application/json" \
---data '{"username": "admin", "password": "yourpassword"}' \
-| grep -o '"token":"[^"]*' | grep -o '[^"]*$'
+POST http://your-emqx-address:8483/api/v5/login
 ```
 
-- 将 `your-emqx-address` 替换为您的 EMQX 节点的实际地址或 IP。
-- 将 `"admin"` 和 `"yourpassword"` 替换为相应的 Dashboard 用户名和密码。
+**请求头:**
 
-::: tip
+- `Content-Type: application/json`
 
-此认证过程中使用的用户名和密码与您的 EMQX Dashboard 凭据相同。
+**请求体:**
 
-:::
-
-##### 使用 Shell 脚本
-
-或者，您可以使用此 Shell 脚本提示输入用户名和密码，然后检索 Bearer Token：
-
-```bash
-#!/bin/bash
-
-echo "Enter Dashboard username:"
-read username
-
-echo "Enter Dashboard password:"
-read -s password  # 使用 -s 隐藏输入以增强安全性
-
-token=$(curl -s --json "{\"username\": \"${username}\", \"password\": \"${password}\"}" \
-http://your-emqx-address:8483/api/v5/login 2> /dev/null | jq -r '.token')
-
-echo "Bearer token: ${token}"
+```json
+{
+  "username": "admin",
+  "password": "yourpassword"
+}
 ```
 
-- 将 `your-emqx-address` 替换为您的 EMQX 节点的实际地址或 IP。
-- 此处使用 `jq` 工具解析 JSON 响应并提取 Token。
+- 将 `your-emqx-address` 替换为您的 EMQX 节点的地址或 IP。
+- 将 `"admin"` 和 `"yourpassword"` 替换为您的 EMQX Dashboard 凭证。
+
+响应中将包含 Bearer Token，您可以使用该 Token 对 API 请求进行身份验证。
 
 #### 使用 Bearer Token 进行身份认证
 
