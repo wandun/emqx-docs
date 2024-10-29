@@ -48,7 +48,7 @@ This configuration specifies the following:
 - The cluster can be accessed at `emqx.us-east.myinfra.net:11883`.
 - The Client ID prefix for Cluster Linking MQTT connections is `clink-us-east`.
 - All messages (matching the `#` wildcard topic) will be forwarded to the local cluster.
-- A dedicated listener for Cluster Linking connections is enabled on port 11883.
+- A dedicated listener for Cluster Linking connections is enabled on port `11883`.
 
 ## Set Up the Second Cluster (cluster-eu-west)
 
