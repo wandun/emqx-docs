@@ -460,7 +460,7 @@
 - [#13012](https://github.com/emqx/emqx/pull/13012) MQTT 监听器配置选项 `access_rules` 已通过以下方式进行改进：
 
   - 如果配置了无效的访问规则，监听器不再以难以理解的错误消息崩溃。而是生成配置错误。
-  - 现在可以通过逗号分隔在单个字符串中添加多个规则（例如，“allow 10.0.1.0/24，deny all”）。
+  - 现在可以通过逗号分隔在单个字符串中添加多个规则（例如，“allow 10.0.1.0/24, deny all”）。
 
 - [#13041](https://github.com/emqx/emqx/pull/13041) 改进了 HTTP 认证错误日志消息。如果 POST 方法缺少 HTTP 内容类型标头，它现在会发出一个有意义的错误消息，而不是一个不太可读的带有堆栈跟踪的异常。
 
@@ -480,7 +480,7 @@
 
 ### 修复
 
-- [#12759](https://github.com/emqx/emqx/pull/12759) EMQX 现在会自动删除由于 shcema 验证错误而上传失败的无效备份文件。此修复确保只显示和存储有效的配置文件，提升系统可靠性。
+- [#12759](https://github.com/emqx/emqx/pull/12759) EMQX 现在会自动删除由于 schema 验证错误而上传失败的无效备份文件。此修复确保只显示和存储有效的配置文件，提升系统可靠性。
 
 - [#12766](https://github.com/emqx/emqx/pull/12766) 将 `message_queue_too_long` 错误原因重命名为 `mailbox_overflow`，与对应的配置参数 `force_shutdown.max_mailbox_size` 保持一致。
 
