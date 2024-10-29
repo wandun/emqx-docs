@@ -15,7 +15,7 @@ On the configuration page, configure the settings of the following fields:
 - **Client ID Prefix**: Define a prefix for ClientIDs used by MQTT connections to the remote cluster. For more information, see [Configure MQTT Connections](#configure-mqtt-connections).
 - **Username**: Username for authentication to the remote cluster, if required.
 - **Password**: Password for authentication to the remote cluster, if required.
-- **Topics**: List of MQTT topic filters that specify which messages the local cluster will receive from the remote cluster. For more information, see [Configure Topics](#configure-topics). You can click the plus sign to add topics or the minus sign to remove them.
+- **Topics**: A list of MQTT topic filters that specify which messages the local cluster will receive from the remote cluster. By default, the topic list is empty. You can add topics by clicking the plus sign and remove topics to leave the list empty if needed. For more information, see [Configure Topics](#configure-topics).
 - **Enable TLS**: Enable this option if communication between clusters requires TLS encryption. Configure the settings such as SSL certificates.
 - **Advanced Settings**: Configure additional settings such as MQTT protocol parameters.
 
