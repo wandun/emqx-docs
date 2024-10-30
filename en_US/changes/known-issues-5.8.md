@@ -45,6 +45,20 @@
   > **Workaround:**
   > Adjust the **Max Dashboard Record Size** through the Dashboard, or lower the `log.audit.max_filter_size` setting. Over time, problematic events will be cleared from the Audit log as new events are recorded.
 
+- **Distorted Gauge Values in `GET /monitor` HTTP API and Dashboard**
+
+  When using the `GET /monitor` HTTP API, which also provides data for the Dashboard, changing the time window from 1 hour to a larger time frame may cause fresh data points (collected within the past hour) to appear distorted.  For instance, three connections may incorrectly display as nine or more. This issue is purely visual for data points within the past hour. However, for data older than 1 hour, the distortion is irreversible.
+
+  Impacted gauges:
+
+  - `disconnected_durable_sessions`
+  - `subscriptions_durable`
+  - `subscriptions`
+  - `topics`
+  - `connections`
+  - `live_connections`
+
+
 ## e5.8.0
 
 - **Node Crash Race Condition (since 5.0, fixed in 5.8.1)**
