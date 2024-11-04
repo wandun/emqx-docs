@@ -2,11 +2,11 @@
 
 ## e5.8.2
 
-- **IoTDB may not work properly in batch mode (batch_size > 1).**
+- **IoTDB May Not Work Properly in Batch Mode when `batch_size > 1`**
 
-  The reason is that our implementation uses the IoTDB v1 API which does not support batch operation, hence, we use iteration to simulate batch operations, which is not atomic and may be bugly.
+  This issue arises because EMQX uses the IoTDB v1 API, which lacks native support for batch operations. To simulate batch functionality, an iterative approach is used; however, this method is not atomic and may lead to bugs.
 
-- **The Thrift driver of IoTDB does not support `async` mode.**
+- **The Thrift Driver for IoTDB Does Not Support `async` Mode**
 
 ## e5.8.1
 
