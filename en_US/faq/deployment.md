@@ -66,6 +66,16 @@ Please make sure openssl-1.1.1 (libcrypto) and libncurses are installed.
 
 It indicates that the "crypto" application in Erlang/OTP that EMQX depends on failed to start because the required openssl dynamic lib (.so) is not found. The solution is as follows:
 
+::: warning Important Notice
+
+The solutions provided below are examples only.
+
+The listed source versions are selected based on current knowledge but may be outdated or have vulnerabilities.
+
+For the latest security updates, installing `libcrypto` directly from your operating system's package manager is recommended.
+
+:::
+
 :::: tabs
 
 ::: tab CentOS
