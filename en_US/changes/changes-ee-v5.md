@@ -138,6 +138,8 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
 
 - [#14079](https://github.com/emqx/emqx/pull/14079) Resolved a latency issue with Kafka consumers when multiple partitions shared the same partition leader in Kafka. Previously, fetch requests were blocked because Kafka only allows one in-flight fetch request per connection, leading to head-of-line blocking. This fix ensures that each partition consumer establishes its own TCP connection to the partition leader, preventing delays when partitions share the same leader broker.
 
+- [#14106](https://github.com/emqx/emqx/pull/14106) Added a validation that forbids a single Kafka Consumer connector from containing sources with repeated Kafka topics.
+
 - [#14120](https://github.com/emqx/emqx/pull/14120) Improved handling of timeouts during Pulsar Connector health checks to reduce unnecessary log noise.   Previously, timeouts could generate repetitive error logs. For example:   
 
   ```

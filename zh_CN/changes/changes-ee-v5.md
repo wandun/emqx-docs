@@ -149,6 +149,8 @@
 
 - [#14079](https://github.com/emqx/emqx/pull/14079) 解决了 Kafka 消费者在多个分区共享同一分区 leader 时的延迟问题。此前，由于 Kafka 每个连接只能同时处理一个进行中的 fetch 请求，导致了队头阻塞。此修复确保每个分区消费者都建立自己的 TCP 连接到分区 leader，以防止分区共享 leader 时的延迟。
 
+- [#14106](https://github.com/emqx/emqx/pull/14106) 增加了验证，防止单个 Kafka 消费者连接器包含具有重复 Kafka 主题的 source。
+
 - [#14120](https://github.com/emqx/emqx/pull/14120) 改进了 Pulsar 连接器健康检查中的超时处理，以减少不必要的日志噪音。
 
   之前，超时可能会生成重复的错误日志。例如：
