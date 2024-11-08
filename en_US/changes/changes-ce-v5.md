@@ -11,20 +11,6 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
 #### Core MQTT Functionalities
 
 
-- [#14047](https://github.com/emqx/emqx/pull/14047) Lowered default `active_n` value from `100` to `10`.
-
-  This change improves the responsiveness of MQTT clients to control signals, particularly when publishing at high rates with small messages.
-
-  The new `active_n` value of `10` is set deliberately lower than the default Receive-Maximum (`32`), to introduce more push-back at the TCP layer in the following scenarios:
-
-  - The MQTT client process is blocked while performing external authorization checks.
-  - The MQTT client process is blocked during data integration message sends.
-  - EMQX is experiencing overload conditions.
-
-  Performance testing showed no significant increase in latency across various scenarios (one-to-one, fan-in, and fan-out) on 8-core, 16GB memory nodes.
-  However, on 2-core, 4GB memory nodes, the baseline latency (with active_n = `100`) was already in the higher 3-digit range with high CPU utilization.
-  The decision to lower `active_n` optimizes for more common use cases where system stablity takes precedence over latency (in smaller instances).
-
 - [#14059](https://github.com/emqx/emqx/pull/14059) Added a new configuration option for the retainer to cap message expiry intervals for retained messages. This enables garbage collection to remove messages sooner if storage is running low.
 
 - [#14072](https://github.com/emqx/emqx/pull/14072) Updated the virtual machine to use Unicode for its printable range. This improvement enhances the readability of certain binary data in messages. For instance, a binary previously displayed as `<<116,101,115,116,228,184,173,230,150,135>>` will now be formatted as `<<"test中文"/utf8>>`, providing clearer representation.
