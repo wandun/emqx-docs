@@ -2,10 +2,13 @@
 
 ## e5.8.2
 
-- Overlapping topic filters (e.g., `t/1` and `t/+`) in the `topics` configuration for Cluster Linking are now considered invalid. If overlapping filters are detected, the link will fail to start to prevent routing issues.
-- [#14121](https://github.com/emqx/emqx/pull/14121) Deprecated the `health_check_topic` configuration for Kafka Consumer Connector to avoid further confusion. This parameter was never actually used for this connector type. 
-- [#14125](https://github.com/emqx/emqx/pull/14125) For IoTDB, since the Thrift driver does not support `async` mode, an error log will now be generated if `async` mode is specified.
-- [#14015](https://github.com/emqx/emqx/pull/14015) Kafka/Confluent/Azure Event Hub Producers with a dynamic topic (i.e., a topic that contains placeholders) no longer support disk buffering. Only memory and hybrid modes are now supported.
+- [#14004](https://github.com/emqx/emqx/pull/14004) Fix an issue with Cluster Linking where having overlapping topic filters in `topics` configuration would lead to inconsistent and incomplete cross-cluster message routing. Each topic filter is respected now, but overlapping filters may lead to increased cross-cluster routing complexity.
+  Redundant topic filters (e.g. `t/1` and `t/+`) in the `topics` configuration are now considered invalid. The link will fail to start if such configuration is detected.
+
+- [#14015](https://github.com/emqx/emqx/pull/14015) Kafka/Confluent/Azure Event Hub Producers with a dynamic topic (i.e., a topic that contains placeholders) no longer support disk buffering.  Only memory and hybrid modes are now supported.
+
+- [#14106](https://github.com/emqx/emqx/pull/14106) Added a validation that forbids a single Kafka Consumer connector from containing sources with repeated Kafka topics.  If you want to repeat topics, create new connector and source(s).
+
 
 ## e5.8.1
 
