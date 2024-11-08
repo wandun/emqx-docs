@@ -78,9 +78,11 @@ Pay attention to selecting the correct software version number, OTP version numb
 6. Load new files at runtime:
 
     ```bash
-    $ emqx eval 'c:lm().'
-    [{module, emqx},
-     {module, emqx_rule_engine}]
+    $ emqx eval 'c:l(emqx).'
+    {module,emqx}
+
+    $ emqx eval 'c:l(emqx_rule_engine).'
+    {module,emqx_rule_engine}
     ```
 
 ## Rollback the Patches
@@ -94,7 +96,9 @@ Pay attention to selecting the correct software version number, OTP version numb
 2. reload the beam files:
 
     ```bash
-    $ emqx eval 'c:lm().'
-    [{module, emqx},
-     {module, emqx_rule_engine}]
+    $ emqx eval 'c:l(emqx).'
+    {module,emqx}
+
+    $ emqx eval 'c:l(emqx_rule_engine).'
+    {module,emqx_rule_engine}
     ```
