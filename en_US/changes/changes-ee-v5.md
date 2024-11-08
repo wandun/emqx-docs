@@ -142,6 +142,11 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
   2024-10-31T12:41:41.014678+00:00 [error] tag: CONNECTOR/PULSAR, msg: health_check_exception, reason: #{reason => {timeout,{gen_server,call,[<0.5877.0>,get_status,5000]}},stacktrace => [{gen_server,call,3,[{file,"gen_server.erl"},{line,419}]},{emqx_bridge_pulsar_connector,on_get_status,2,[{file,"src/emqx_bridge_pulsar_connector.erl"},{line,174}]},{emqx_resource,call_health_check,3,[{file,"src/emqx_resource.erl"},{line,550}]},{emqx_resource_manager,worker_resource_health_check,1,[{file,"src/emqx_resource_manager.erl"},{line,1149}]}],exception => exit}, resource_id: <<"connector:pulsar:a">>
   ```
 
+- [#14125](https://github.com/emqx/emqx/pull/14125) For IoTDB, since the Thrift never supported the `async` mode, now
+  An error log will be printed if a Thrift driver is set up in `async` mode.
+
+- [#14106](https://github.com/emqx/emqx/pull/14106) Added a validation that forbids a single Kafka Consumer connector from containing sources with repeated Kafka topics.  If you want to repeat topics, create new connector and source(s).
+
 #### Observability
 
 - [#13909](https://github.com/emqx/emqx/pull/13909) Fixed log formatting for cases where the payload cannot be displayed as readable UTF-8 Unicode characters.
