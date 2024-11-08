@@ -61,7 +61,8 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
 
 - [#14102](https://github.com/emqx/emqx/pull/14102) Added support for SSL private key passphrase from a secret file.
 
-  EMQX can now read the passphrase from a secret file if `password` is configured as `...ssl.password = "file://{path-to-secret-file}"`.
+  EMQX can now read the passphrase from a secret file if `password` is configured as `...ssl_options.password = "file://{path-to-secret-file}"`.
+
 
 #### Data Integration
 
