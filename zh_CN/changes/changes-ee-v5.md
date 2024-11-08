@@ -139,6 +139,8 @@
 
 - [#14005](https://github.com/emqx/emqx/pull/14005) 修复了 IoTDB Thrift 驱动在启用 SSL 时无法正常工作的问题。
 
+- [#14125](https://github.com/emqx/emqx/pull/14125) 对于 IoTDB，由于 Thrift 驱动从未支持过 `async` 模式，现在如果在配置中指定了 `async` 模式，将会生成一条错误日志。
+
 - [#14008](https://github.com/emqx/emqx/pull/14008) 解决了具有聚合模式的动作（例如 S3、Azure Blob Storage、Snowflake）中的潜在竞争条件，该问题可能导致上传过程中跳过某个聚合批次。
 
 - [#14015](https://github.com/emqx/emqx/pull/14015) 修复了 Kafka/Confluent/Azure Event Hub Producer 动作的一个问题。在启用了磁盘缓冲的情况下，重启后这些动作不会发送已排队的消息，直到新的消息到达。此修复适用于固定主题（即不包含占位符）的动作。此外，在 EMQX 5.7.2 之前，Kafka/Confluent/Azure Event Hub Producer 动作的磁盘缓冲消息存储在不同的目录结构中。现在，如果检测到旧的磁盘缓冲目录，EMQX 将自动重命名为当前结构，以防止数据丢失。

@@ -74,6 +74,14 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
 - [#14037](https://github.com/emqx/emqx/pull/14037) Improved the internal database bootstrap process to better tolerate temporary unavailability of peer nodes, particularly when a new node joins an existing cluster.
 - [#14116](https://github.com/emqx/emqx/pull/14116) Fixed an issue where the default configuration for the retainer was generated incorrectly after joining a cluster.
 
+#### MQTT Durable Sessions
+
+- [#14042](https://github.com/emqx/emqx/pull/14042) Fix crash in the durable session after updates to subscription parameters (such as QoS, `no_local`, `upgrade_qos`, ...).
+- [#14052](https://github.com/emqx/emqx/pull/14052) Corrected memory usage reporting from cgroups when in use.
+- [#14055](https://github.com/emqx/emqx/pull/14055) Updated the `/clients_v2` API to properly respect all filtering arguments when querying offline clients with durable sessions. Previously, only the `username` filter was applied, while other filtering arguments were ignored.
+- [#14151](https://github.com/emqx/emqx/pull/14151) Fixed handling of the `conn_state` filter in the `/clients_v2` API for offline clients with durable sessions. Previously, these clients could be incorrectly selected with `conn_state=connected`.
+- [#14057](https://github.com/emqx/emqx/pull/14057) Resolved a compatibility issue that prevented the Messages DS database from starting due to a slightly different database configuration schema. This issue occurred when upgrading EMQX from version 5.7.x with session durability enabled.
+
 #### REST API
 
 - [#14023](https://github.com/emqx/emqx/pull/14023) Fixed an issue with the `GET /monitor` HTTP API where returned values could appear higher than actual values, depending on the requested time window. For data points within a 1-hour window, this distortion is only visual on the Dashboard. However, for data points older than 1 hour, the data distortion is permanent.
@@ -92,9 +100,7 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
 
 #### EMQX Clustering
 
-- [#13928](https://github.com/emqx/emqx/pull/13928) Fixed an issue where a bidirectional cluster link could become stuck and unresponsive if one side disabled the link for an extended period before re-enabling 
 
-- [#13929](https://github.com/emqx/emqx/pull/13929) Fixed an issue where a cluster link could occasionally become stuck and stop working until a manual restart of the upstream cluster was performed.
 - [#13996](https://github.com/emqx/emqx/pull/13996) Fixed an intermittent crash occurring when using `emqx conf fix` to resolve configuration discrepancies, particularly if a configuration key was missing on one of the nodes.
 
 #### Security
@@ -102,12 +108,10 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
 - [#13922](https://github.com/emqx/emqx/pull/13922) Updated the CRL (Certificate Revocation List) cache to use the full Distribution Point (DP) URL as the cache key. Previously, only the path part of the URL was used, causing conflicts when multiple DPs shared the same path.
 - [#13924](https://github.com/emqx/emqx/pull/13924) Fixed an issue where JWK keys could leak into debug logs upon JWT authentication failure.
 
-#### Rule Engine
+#### Data Integration
 
 - [#13916](https://github.com/emqx/emqx/pull/13916) Fixed an issue where the parent metric `failed` was not incremented when a rule’s `failed.no_result` or `failed.exception` metrics were updated.
 - [#14001](https://github.com/emqx/emqx/pull/14001) Resolved a race condition where a resource (such as a connector, action, source, authentication, or authorization) could falsely report a connected, healthy channel after a brief disconnection. This issue could result in excessive `action_not_found` log entries when the race condition occurred.
-
-#### Data Integration
 
 - [#13913](https://github.com/emqx/emqx/pull/13913) Fixed an issue with the actions and source HTTP APIs where a 500 status code would be returned if a timeout occurred while attempting to update or delete a resource.
 - [#14101](https://github.com/emqx/emqx/pull/14101) Resolved an issue where deleting a resource would fail if a source and an action were both created with the same name.

@@ -2,11 +2,11 @@
 
 ## e5.8.2
 
-- [#14004](https://github.com/emqx/emqx/pull/14004) Fixed an issue in Cluster Linking where overlapping topic filters in the `topics` configuration caused inconsistent and incomplete cross-cluster message routing. Each topic filter is now handled individually. Therefore, redundant topic filters (e.g. `t/1` and `t/+`) in the `topics` configuration are now considered invalid. The link will fail to start if such configuration is detected.
+- [#14004](https://github.com/emqx/emqx/pull/14004) Fixed an issue in Cluster Linking where overlapping topic filters in the `topics` configuration caused inconsistent and incomplete cross-cluster message routing. Each topic filter is now handled individually. Therefore, redundant topic filters (e.g. `t/1` and `t/+`) in the `topics` configuration are now considered invalid. The link will fail to start if such a configuration is detected.
   
 - [#14015](https://github.com/emqx/emqx/pull/14015) Kafka/Confluent/Azure Event Hub Producers with a dynamic topic (i.e., a topic that contains placeholders) no longer support disk buffering.  Only memory and hybrid modes are now supported.
 
-- [#14106](https://github.com/emqx/emqx/pull/14106) Added a validation that forbids a single Kafka Consumer connector from containing sources with repeated Kafka topics.  If you want to repeat topics, create new connector and source(s).
+- [#14106](https://github.com/emqx/emqx/pull/14106) Added a validation that forbids a single Kafka Consumer connector from containing sources with repeated Kafka topics.  If you want to repeat topics, create a new connector and source(s).
 
 
 ## e5.8.1

@@ -128,6 +128,8 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
 
 - [#14005](https://github.com/emqx/emqx/pull/14005) Fixed an issue where the IoTDB Thrift driver failed to function with SSL enabled.
 
+- [#14125](https://github.com/emqx/emqx/pull/14125) For IoTDB, as the Thrift driver has never supported `async` mode, an error log will now be generated if `async` mode is specified in the configuration.
+
 - [#14008](https://github.com/emqx/emqx/pull/14008) Resolved a potential race condition in actions with aggregation mode (e.g., S3, Azure Blob Storage, Snowflake) that could result in an aggregated batch being skipped during upload.
 
 - [#14015](https://github.com/emqx/emqx/pull/14015) Fixed an issue where a Kafka/Confluent/Azure Event Hub Producer action with disk buffering would not send queued messages after a restart until a new message arrived. This fix applies to actions with a fixed topic (i.e., without placeholders). Additionally, prior to EMQX 5.7.2, disk-buffered messages for Kafka/Confluent/Azure Event Hub Producer actions were stored in a different directory structure. Now, upon detecting an old disk buffer directory, EMQX will automatically rename it to the current structure to prevent data loss.
@@ -141,11 +143,6 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
   ```
   2024-10-31T12:41:41.014678+00:00 [error] tag: CONNECTOR/PULSAR, msg: health_check_exception, reason: #{reason => {timeout,{gen_server,call,[<0.5877.0>,get_status,5000]}},stacktrace => [{gen_server,call,3,[{file,"gen_server.erl"},{line,419}]},{emqx_bridge_pulsar_connector,on_get_status,2,[{file,"src/emqx_bridge_pulsar_connector.erl"},{line,174}]},{emqx_resource,call_health_check,3,[{file,"src/emqx_resource.erl"},{line,550}]},{emqx_resource_manager,worker_resource_health_check,1,[{file,"src/emqx_resource_manager.erl"},{line,1149}]}],exception => exit}, resource_id: <<"connector:pulsar:a">>
   ```
-
-- [#14125](https://github.com/emqx/emqx/pull/14125) For IoTDB, since the Thrift never supported the `async` mode, now
-  An error log will be printed if a Thrift driver is set up in `async` mode.
-
-- [#14106](https://github.com/emqx/emqx/pull/14106) Added a validation that forbids a single Kafka Consumer connector from containing sources with repeated Kafka topics.  If you want to repeat topics, create new connector and source(s).
 
 #### Observability
 
