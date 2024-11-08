@@ -1,5 +1,13 @@
 # EMQX 5.8 中的不兼容变更
 
+## e5.8.2
+
+- 在集群连接的 `topics` 配置中，重叠的主题过滤器（例如，`t/1` 和 `t/+`）现在被视为无效配置。如果检测到重叠过滤器，连接将无法启动，以防止路由问题。
+- [#14121](https://github.com/emqx/emqx/pull/14121) 废弃了 Kafka 消费者连接器的 `health_check_topic` 配置，以避免混淆。此参数实际上从未在该连接器类型中使用过。
+- [#14125](https://github.com/emqx/emqx/pull/14125) 对于 IoTDB，由于 Thrift 驱动不支持 `async` 模式，现在如果指定 `async` 模式，将会生成错误日志。
+- [#14015](https://github.com/emqx/emqx/pull/14015) Kafka/Confluent/Azure Event Hub Producer 动作不再支持带有动态主题（即包含占位符的主题）的磁盘缓冲。现在仅支持内存和混合模式。
+- [#14106](https://github.com/emqx/emqx/pull/14106) 增加了验证，防止单个 Kafka 消费者连接器包含具有重复 Kafka 主题的 source。如果需要在多个 source 中使用相同的主题，请创建新的连接器及相应的 source。
+
 ## e5.8.1
 
 - [#13792](https://github.com/emqx/emqx/pull/13792) 在新增黑名单记录时，对于未指定 `until`  参数的默认过期时间已从 1 年改为 `无限期`。

@@ -10,22 +10,6 @@
 
 #### 核心 MQTT 功能
 
-- [#13984](https://github.com/emqx/emqx/pull/13984) Quicer NIF 库现已链接到系统的 `libcrypto`，从而提升了安全性、性能和与系统 OpenSSL 更新的兼容性。
-
-  **注意：** 此更改不适用于 RHEL 7/CentOS 7，因为这些系统仍在使用 OpenSSL 1.0.x。
-
-- [#14047](https://github.com/emqx/emqx/pull/14047) 将默认的 `active_n` 值从 `100` 降低到 `10`。
-
-  此更改提高了 MQTT 客户端对控制信号的响应速度，特别是在高频率发布小消息的情况下。
-
-  新的 `active_n` 值设置为 `10`，明显低于默认的 Receive-Maximum (`32`)，从而在以下场景中增加了 TCP 层的反压效果：
-
-  - MQTT 客户端进程在执行外部授权检查时被阻塞。
-  - MQTT 客户端进程在执行数据集成消息发送时被阻塞。
-  - EMQX 处于过载状态。
-
-  性能测试表明，在 8 核心、16GB 内存的节点上，不同场景（如 one-to-one、fan-in、fan-out）下的延迟没有显著增加。然而，在 2 核心、4GB 内存的节点上，基线延迟（`active_n = 100`）已处于高三位数范围，并伴随较高的 CPU 使用率。降低 `active_n` 的决策是为了优化更常见的用例，在小型实例中优先考虑系统稳定性而非延迟。
-
 - [#14059](https://github.com/emqx/emqx/pull/14059) 为保留消息功能新增了一个配置选项，用于限制保留消息的过期时间间隔。如果存储空间不足，该选项可以使垃圾回收更早地清除消息。
 
 - [#14072](https://github.com/emqx/emqx/pull/14072) 更新了虚拟机的可显示范围以支持 Unicode。此改进提升了消息中某些二进制数据的可读性。例如，之前显示为 `<<116,101,115,116,228,184,173,230,150,135>>` 的二进制数据现在将被格式化为 `<<"test中文"/utf8>>`，提供了更清晰的表示。
@@ -44,7 +28,6 @@
 
 #### EMQX 集群
 
-- [#14040](https://github.com/emqx/emqx/pull/14040) 为节点重平衡过程中的内部 RPC 调用添加了超时设置。之前，如果某个节点没有响应，重平衡过程可能会停滞。
 - [#13903](https://github.com/emqx/emqx/pull/13903) 增加了日志，当副本节点找不到与其自身相同版本的核心节点时，会提示用户。
 
 #### 安全
@@ -85,10 +68,6 @@
 
 - [#14096](https://github.com/emqx/emqx/pull/14096) 将 `cluster_rpc_txid` 作为 Prometheus 指标公开，支持监控集群中每个节点的配置文件同步状态。
 
-#### 审计日志
-
-- [#14152](https://github.com/emqx/emqx/pull/14152) 实现了日志截断功能，以防止存储过长的审计日志内容。
-
 #### MQTT over QUIC
 
 - [#13814](https://github.com/emqx/emqx/pull/13814) 为基于 QUIC 的多流 MQTT 引入了连接范围内的 Keepalive 机制：
@@ -99,6 +78,10 @@
 
 - [#14112](https://github.com/emqx/emqx/pull/14112) 在 QUIC 监听器中增加了对 `ssl_options.hibernate_after` 的支持，以减少 QUIC 传输的内存占用。
 
+- [#13984](https://github.com/emqx/emqx/pull/13984) Quicer NIF 库现已链接到系统的 `libcrypto`，从而提升了安全性、性能和与系统 OpenSSL 更新的兼容性。
+
+  **注意：** 此更改不适用于 RHEL 7/CentOS 7，因为这些系统仍在使用 OpenSSL 1.0.x。
+
 ### 修复
 
 #### 核心 MQTT 功能
@@ -106,6 +89,8 @@
 - [#13931](https://github.com/emqx/emqx/pull/13931) 将 `gen_rpc` 库更新至 3.4.1 版本，其中包含一个修复，防止客户端 socket 初始化错误在服务端升级到节点级别。
 - [#13969](https://github.com/emqx/emqx/pull/13969) 优化了过期保留消息的定期清理，以确保资源的高效使用，尤其是在处理大量过期消息的情况下。
 - [#14068](https://github.com/emqx/emqx/pull/14068) 为所有网关实现模块添加了 `handle_frame_error/2` 回调，用于处理消息解析错误。
+- [#14037](https://github.com/emqx/emqx/pull/14037) 改进了内部数据库的引导过程，以更好地容忍节点临时不可用的情况，特别是在新节点加入现有集群时。
+- [#14116](https://github.com/emqx/emqx/pull/14116) 修复了在加入集群后，保留消息的默认配置生成不正确的问题。
 
 #### MQTT 会话持久化
 
@@ -132,99 +117,89 @@
 
 - [#14117](https://github.com/emqx/emqx/pull/14117) 修正了 REST API 文档中的一个错误，该错误错误地指示 `Users` 端点支持 `Basic` 认证。
 
-#### EMQX Clustering
-
-- [#14037](https://github.com/emqx/emqx/pull/14037) Improved the internal database bootstrap process to better tolerate temporary unavailability of peer nodes, particularly when a new node joins an existing cluster.
-
-- [#14116](https://github.com/emqx/emqx/pull/14116) Fixed an issue where the default configuration for the retainer was generated incorrectly after joining a cluster.
-
-- [#13928](https://github.com/emqx/emqx/pull/13928) Fixed an issue where a bidirectional cluster link could become stuck and unresponsive if one side disabled the link for an extended period before re-enabling it.
+#### EMQX 集群
 
 
-- [#13929](https://github.com/emqx/emqx/pull/13929) Fixed an issue where a cluster link could occasionally become stuck and stop working until a manual restart of the upstream cluster was performed.
-- [#13996](https://github.com/emqx/emqx/pull/13996) Fixed an intermittent crash occurring when using `emqx conf fix` to resolve configuration discrepancies, particularly if a configuration key was missing on one of the nodes.
+- [#13996](https://github.com/emqx/emqx/pull/13996) 修复了在使用 `emqx conf fix` 解决配置差异时的间歇性崩溃问题，尤其是在某个节点缺少配置键的情况下。
 
-#### Security
+#### 安全
 
-- [#13922](https://github.com/emqx/emqx/pull/13922) Updated the CRL (Certificate Revocation List) cache to use the full Distribution Point (DP) URL as the cache key. Previously, only the path part of the URL was used, causing conflicts when multiple DPs shared the same path.
-- [#13924](https://github.com/emqx/emqx/pull/13924) Fixed an issue where JWK keys could leak into debug logs upon JWT authentication failure.
-- [#13998](https://github.com/emqx/emqx/pull/13998) Fixed an issue that caused the SSO feature to crash if OIDC was configured with invalid settings.
+- [#13922](https://github.com/emqx/emqx/pull/13922) 更新了 CRL（证书吊销列表）缓存，以完整的分发点（DP）URL 作为缓存键。此前仅使用了 URL 的路径部分，当多个 DP 共享相同路径时会导致冲突。
+- [#13924](https://github.com/emqx/emqx/pull/13924) 修复了一个问题，该问题可能导致 JWT 认证失败时 JWK 密钥泄露到 debug 日志中。
+- [#13998](https://github.com/emqx/emqx/pull/13998) 修复了一个问题，即如果 OIDC 配置不正确，会导致 SSO 功能崩溃。
 
-#### Rule Engine
+#### 数据集成
 
-- [#13916](https://github.com/emqx/emqx/pull/13916) Fixed an issue where the parent metric `failed` was not incremented when a rule’s `failed.no_result` or `failed.exception` metrics were updated.
-- [#14001](https://github.com/emqx/emqx/pull/14001) Resolved a race condition where a resource (such as a connector, action, source, authentication, or authorization) could falsely report a connected, healthy channel after a brief disconnection. This issue could result in excessive `action_not_found` log entries when the race condition occurred.
+- [#13916](https://github.com/emqx/emqx/pull/13916) 修复了一个问题，即当规则的 `failed.no_result` 或 `failed.exception` 指标更新时，父级指标 `failed` 未被相应地递增。
+- [#14001](https://github.com/emqx/emqx/pull/14001) 解决了一个竞争条件问题，即资源（如连接器、动作、source、认证或授权）在短暂断开连接后可能错误地报告通道已连接且健康。此问题可能会导致大量 `action_not_found` 日志条目。
+- [#13913](https://github.com/emqx/emqx/pull/13913) 修复了 actions 和 source HTTP API 的一个问题，如果在更新或删除资源时发生超时，将返回 500 状态码。
+- [#14101](https://github.com/emqx/emqx/pull/14101) 解决了一个问题，即如果 source 和动作的名称相同，则删除其中任一项资源会失败。
+- [#13901](https://github.com/emqx/emqx/pull/13901) 修复了 Postgres 集成的预处理语句问题。此前，如果在更新 Postgres 集成动作时使用了无效的预处理语句（例如引用了未知的表列），可能导致动作应用旧版本的预处理语句。
 
-#### Data Integration
 
-- [#13913](https://github.com/emqx/emqx/pull/13913) Fixed an issue with the actions and source HTTP APIs where a 500 status code would be returned if a timeout occurred while attempting to update or delete a resource.
+- [#14005](https://github.com/emqx/emqx/pull/14005) 修复了 IoTDB Thrift 驱动在启用 SSL 时无法正常工作的问题。
 
-- [#14101](https://github.com/emqx/emqx/pull/14101) Resolved an issue where deleting a resource would fail if a source and an action were both created with the same name.
+- [#14008](https://github.com/emqx/emqx/pull/14008) 解决了具有聚合模式的动作（例如 S3、Azure Blob Storage、Snowflake）中的潜在竞争条件，该问题可能导致上传过程中跳过某个聚合批次。
 
-- [#13901](https://github.com/emqx/emqx/pull/13901) Fixed prepared statements for Postgres integration. Previously, if an invalid prepared statement was used while updating a Postgres integration action (e.g., referencing an unknown table column), it could cause the action to apply an outdated prepared statement from a previous version.
+- [#14015](https://github.com/emqx/emqx/pull/14015) 修复了 Kafka/Confluent/Azure Event Hub Producer 动作的一个问题。在启用了磁盘缓冲的情况下，重启后这些动作不会发送已排队的消息，直到新的消息到达。此修复适用于固定主题（即不包含占位符）的动作。此外，在 EMQX 5.7.2 之前，Kafka/Confluent/Azure Event Hub Producer 动作的磁盘缓冲消息存储在不同的目录结构中。现在，如果检测到旧的磁盘缓冲目录，EMQX 将自动重命名为当前结构，以防止数据丢失。
 
-- [#14126](https://github.com/emqx/emqx/pull/14126) Fixed prepared statements for Oracle integration. Previously, if an invalid prepared statement was used while updating an Oracle integration action (e.g., referencing an unknown table column), it could cause the action to apply an outdated prepared statement from a previous version.
+- [#14069](https://github.com/emqx/emqx/pull/14069) 修复了 Cassandra 集成的预处理语句问题。此前，当 EMQX 动作中的 SQL 模板被修改时，更新的语句无法为 Cassandra 预处理，导致写入失败。
 
-- [#14005](https://github.com/emqx/emqx/pull/14005) Fixed an issue where the IoTDB Thrift driver failed to function with SSL enabled.
+- [#14079](https://github.com/emqx/emqx/pull/14079) 解决了 Kafka 消费者在多个分区共享同一分区 leader 时的延迟问题。此前，由于 Kafka 每个连接只能同时处理一个进行中的 fetch 请求，导致了队头阻塞。此修复确保每个分区消费者都建立自己的 TCP 连接到分区 leader，以防止分区共享 leader 时的延迟。
 
-- [#14008](https://github.com/emqx/emqx/pull/14008) Resolved a potential race condition in actions with aggregation mode (e.g., S3, Azure Blob Storage, Snowflake) that could result in an aggregated batch being skipped during upload.
+- [#14120](https://github.com/emqx/emqx/pull/14120) 改进了 Pulsar 连接器健康检查中的超时处理，以减少不必要的日志噪音。
 
-- [#14015](https://github.com/emqx/emqx/pull/14015) Fixed an issue where a Kafka/Confluent/Azure Event Hub Producer action with disk buffering would not send queued messages after a restart until a new message arrived. This fix applies to actions with a fixed topic (i.e., without placeholders). Additionally, prior to EMQX 5.7.2, disk-buffered messages for Kafka/Confluent/Azure Event Hub Producer actions were stored in a different directory structure. Now, upon detecting an old disk buffer directory, EMQX will automatically rename it to the current structure to prevent data loss.
-
-- [#14069](https://github.com/emqx/emqx/pull/14069) Fixed prepared statements for Cassandra integration. Previously, when SQL templates in EMQX actions were modified, the updated statements could not be prepared for Cassandra, causing write failures.
-
-- [#14079](https://github.com/emqx/emqx/pull/14079) Resolved a latency issue with Kafka consumers when multiple partitions shared the same partition leader in Kafka. Previously, fetch requests were blocked because Kafka only allows one in-flight fetch request per connection, leading to head-of-line blocking. This fix ensures that each partition consumer establishes its own TCP connection to the partition leader, preventing delays when partitions share the same leader broker.
-
-- [#14120](https://github.com/emqx/emqx/pull/14120) Improved handling of timeouts during Pulsar Connector health checks to reduce unnecessary log noise.
-
-  Previously, timeouts could generate repetitive error logs. For example:
+  之前，超时可能会生成重复的错误日志。例如：
 
   ``` 2024-10-31T12:41:41.014678+00:00 [error] tag: CONNECTOR/PULSAR, msg: health_check_exception, reason: #{reason => {timeout,{gen_server,call,[<0.5877.0>,get_status,5000]}},stacktrace => [{gen_server,call,3,[{file,"gen_server.erl"},{line,419}]},{emqx_bridge_pulsar_connector,on_get_status,2,[{file,"src/emqx_bridge_pulsar_connector.erl"},{line,174}]},{emqx_resource,call_health_check,3,[{file,"src/emqx_resource.erl"},{line,550}]},{emqx_resource_manager,worker_resource_health_check,1,[{file,"src/emqx_resource_manager.erl"},{line,1149}]}],exception => exit}, resource_id: <<"connector:pulsar:a">> ``` 
 
-- [#14126](https://github.com/emqx/emqx/pull/14126) Fix prepared statements for Oracle integration. Prior to this fix, when updating a Oracle integration action, if an invalid prepared-statements is used, for example reference to an unknown table column name, it may cause the action to apply the oldest version prepared-statement from the past.
+#### 可观测性
 
-#### Observability
+- [#13909](https://github.com/emqx/emqx/pull/13909) 修复了日志格式问题，解决了无法将负载显示为可读 UTF-8 Unicode 字符的情况。
 
-- [#13909](https://github.com/emqx/emqx/pull/13909) Fixed log formatting for cases where the payload cannot be displayed as readable UTF-8 Unicode characters.
+- [#14061](https://github.com/emqx/emqx/pull/14061) 改进了 `emqx_cm:request_stepdown/3` 失败时的日志信息。
 
-- [#14061](https://github.com/emqx/emqx/pull/14061) Improved log information when `emqx_cm:request_stepdown/3` fails.
+  在某些场景下，当一个客户端通道需要终止另一个具有相同 ClientID 的通道时，可能会出现竞争条件，如果目标通道已经关闭或终止，则不会再生成无用的错误日志和堆栈信息。
 
-  In scenarios where a client channel needs to terminate another channel with the same ClientID, a race condition may occur if the target channel has already been closed or terminated. In such cases, error logs and stack traces that provide no useful information will no longer be generated.
-
-- [#14070](https://github.com/emqx/emqx/pull/14070) Removed the connector's `state` from error and warning logs due to its potential length. For issue analysis, the connector's state can now be accessed through `emqx_resource:list_instances_verbose/0`. Below is an example of a log entry before this change:
+- [#14070](https://github.com/emqx/emqx/pull/14070) 从错误和警告日志中移除了连接器的 `state` 信息，因为其长度可能过长。对于问题分析，现在可以通过 `emqx_resource:list_instances_verbose/0` 来获取连接器的状态。以下是变更前的日志示例：
 
   ```
   pid: <0.43914.0>, connector: connector:sqlserver:connector-05a2e105, reason: [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Argument data type varchar is invalid for argument 2 of dateadd function. SQLSTATE IS: 42000, state: {"resource_opts":{"start_timeout":5000,"start_after_created":true,"health_check_interval":15000},"pool_name":"connector:sqlserver:connector-05a2e105","installed_channels":{"action:sqlserver:action-4b033621:connector:sqlserver:connector-05a2e105":{"sql_templates":{"batch_insert_temp":{"send_message":{"batch_insert_tks":["{str,<<\" ( \">>}","{var,[<<\"messageId\">>]}","{str,<<\", \">>}","{var,[<<\"measurement\">>]}","{str,<<\", \">>}","{var,[<<\"Analog_IN_Fault_1\">>]}","{str,<<\", \">>}","{var,[<<\"Analog_IN_Fault_2\">>]}","{str,<<\", \">>}","{var,[<<\"Analog_IN_Fault_3\">>]}","{str,<<\", \">>}","{var,[<<\"Analog_IN_Fault_4\">>]}","{str,<<\", \">>}","{var,[<<\"Analog_IN_PV_1\">>]}","{str,<<\", \">>}","{var,[<<\"Analog_IN_PV_2\">>]}","{str,<<\", \">>}","{var,[<<\"Analog_IN_PV_3\">>]}","{str,<<\", \">>}","{var,[<<\"Analog_IN_PV_4\">>]}","{str,<<\", DATEADD(MS, \">>}","{var,[<<\"ms_shift\">>]}","{str,<<\", DATEADD(S, \">>}","{var,[<<\"s_shift\">>]}","{str,<<\", '19700101 00:00:00:000') ))\">>}"],"batch_insert_part":"insert into TransactionLog(MessageId, Measurement, Fault1, Fault2, Fault3, Fault4, Value1, Value2, Value3, Value4, DateStamp) \r\n"}}}}}},msg: invalid_request
   ```
 
-- [#14099](https://github.com/emqx/emqx/pull/14099) Removed an error-level log entry that was triggered when validation of UTF-8 strings in MQTT messages failed.
+- [#14099](https://github.com/emqx/emqx/pull/14099) 移除了在验证 MQTT 消息中的 UTF-8 字符串失败时触发的错误级日志。
 
-  Example of the removed log entry:
+  被移除的日志示例如下：
 
   ```
   {"time":"2024-10-11T06:05:07.610048+00:00","level":"error","msg":"supervisor: {esockd_connection_sup,0.53591191.0}, errorContext: connection_shutdown, reason: #{cause => invalid_topic,reason => malformed_utf8_string_length}, offender: [{pid,0.53591191.0},...]", ..., "error_logger":{"type":"supervisor_report","tag":"error_report"}}
   ```
 
-- [#14091](https://github.com/emqx/emqx/pull/14091) Implemented a fix to remove `function_clause` from log messages when users provide unsupported write syntax.
+- [#14091](https://github.com/emqx/emqx/pull/14091) 实现了一个修复，以在用户提供不支持的写入语法时移除日志中的 `function_clause` 错误。
 
-  Example of unsupported syntax:
+  不支持的语法示例：
 
   ```bash
   weather,location=us-midwest,season=summer temperature=82 ${timestamp}u 
   ```
 
-  Before this fix, the error log would contain the `function_clause` error, as shown:
+  在此修复之前，错误日志中会包含 `function_clause` 错误，如下所示：
 
   ```
   pid: <0.558392.0>, info: {"stacktrace":["{emqx_bridge_influxdb_connector,parse_timestamp,[[1719350482910000000,<<\"u\">>]],[{file,\"emqx_bridge_influxdb_connector.erl\"},{line,692}]}", ...], ..., "error":"{error,function_clause}"}, tag: ERROR, msg: resource_exception
   ```
 
-  This change improves log clarity by omitting `function_clause` in cases of syntax errors.
+  该更改通过在语法错误情况下省略 `function_clause` 提升了日志的清晰度。
 
-#### Cluster Linking
+#### 审计日志
+
+- [#14152](https://github.com/emqx/emqx/pull/14152) 实现了日志截断功能，以防止存储过长的审计日志内容。
+
+#### 集群连接
 
 
-- [#14004](https://github.com/emqx/emqx/pull/14004) Fixed an issue in Cluster Linking where overlapping topic filters in the `topics` configuration caused inconsistent and incomplete cross-cluster message routing. Each topic filter is now handled individually; however, overlapping filters may introduce additional complexity in cross-cluster routing.
+- [#14004](https://github.com/emqx/emqx/pull/14004) 修复了集群连接中的一个问题，即在 `topics` 配置中，重叠的主题过滤器导致跨集群消息路由不一致且不完整。现在每个主题过滤器都会被单独处理；但需要注意的是，重叠的过滤器可能会增加跨集群路由的复杂性。
+- [#13929](https://github.com/emqx/emqx/pull/13929) 修复了一个问题，即集群连接偶尔会卡住并停止工作，直到手动重启上游集群后才能恢复。
 
 ## 5.8.1
 

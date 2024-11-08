@@ -11,20 +11,6 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
 #### Core MQTT Functionalities
 
 
-- [#14047](https://github.com/emqx/emqx/pull/14047) Lowered default `active_n` value from `100` to `10`.
-
-  This change improves the responsiveness of MQTT clients to control signals, particularly when publishing at high rates with small messages.
-
-  The new `active_n` value of `10` is set deliberately lower than the default Receive-Maximum (`32`), to introduce more push-back at the TCP layer in the following scenarios:
-
-  - The MQTT client process is blocked while performing external authorization checks.
-  - The MQTT client process is blocked during data integration message sends.
-  - EMQX is experiencing overload conditions.
-
-  Performance testing showed no significant increase in latency across various scenarios (one-to-one, fan-in, and fan-out) on 8-core, 16GB memory nodes.
-  However, on 2-core, 4GB memory nodes, the baseline latency (with active_n = `100`) was already in the higher 3-digit range with high CPU utilization.
-  The decision to lower `active_n` optimizes for more common use cases where system stablity takes precedence over latency (in smaller instances).
-
 - [#14059](https://github.com/emqx/emqx/pull/14059) Added a new configuration option for the retainer to cap message expiry intervals for retained messages. This enables garbage collection to remove messages sooner if storage is running low.
 
 - [#14072](https://github.com/emqx/emqx/pull/14072) Updated the virtual machine to use Unicode for its printable range. This improvement enhances the readability of certain binary data in messages. For instance, a binary previously displayed as `<<116,101,115,116,228,184,173,230,150,135>>` will now be formatted as `<<"test中文"/utf8>>`, providing clearer representation.
@@ -85,6 +71,8 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
 - [#13931](https://github.com/emqx/emqx/pull/13931) Updated the `gen_rpc` library to version 3.4.1, which includes a fix to prevent client socket initialization errors from escalating to the node level on the server side.
 - [#13969](https://github.com/emqx/emqx/pull/13969) Optimized the periodic cleanup of expired retained messages to ensure efficient resource usage, particularly in cases with a large volume of expired messages.
 - [#14068](https://github.com/emqx/emqx/pull/14068) Added the `handle_frame_error/2` callback to all gateway implementation modules to handle message parsing errors.
+- [#14037](https://github.com/emqx/emqx/pull/14037) Improved the internal database bootstrap process to better tolerate temporary unavailability of peer nodes, particularly when a new node joins an existing cluster.
+- [#14116](https://github.com/emqx/emqx/pull/14116) Fixed an issue where the default configuration for the retainer was generated incorrectly after joining a cluster.
 
 #### REST API
 
@@ -104,11 +92,7 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
 
 #### EMQX Clustering
 
-- [#14037](https://github.com/emqx/emqx/pull/14037) Improved the internal database bootstrap process to better tolerate temporary unavailability of peer nodes, particularly when a new node joins an existing cluster.
-
-- [#14116](https://github.com/emqx/emqx/pull/14116) Fixed an issue where the default configuration for the retainer was generated incorrectly after joining a cluster.
-
-
+- [#13928](https://github.com/emqx/emqx/pull/13928) Fixed an issue where a bidirectional cluster link could become stuck and unresponsive if one side disabled the link for an extended period before re-enabling 
 
 - [#13929](https://github.com/emqx/emqx/pull/13929) Fixed an issue where a cluster link could occasionally become stuck and stop working until a manual restart of the upstream cluster was performed.
 - [#13996](https://github.com/emqx/emqx/pull/13996) Fixed an intermittent crash occurring when using `emqx conf fix` to resolve configuration discrepancies, particularly if a configuration key was missing on one of the nodes.
