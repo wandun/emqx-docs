@@ -1,5 +1,13 @@
 # Known Issues in EMQX 5.8
 
+## e5.8.2
+
+- **IoTDB May Not Work Properly in Batch Mode when `batch_size > 1`**
+
+  This issue arises because EMQX uses the IoTDB v1 API, which lacks native support for batch operations. To simulate batch functionality, an iterative approach is used; however, this method is not atomic and may lead to bugs.
+
+- **The Thrift Driver for IoTDB Does Not Support `async` Mode**
+
 ## e5.8.1
 
 - **Node Crash if Linux monotonic clock steps backward (since 5.0)**
