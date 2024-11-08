@@ -10,9 +10,6 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
 
 #### Core MQTT Functionalities
 
-- [#13984](https://github.com/emqx/emqx/pull/13984) The Quicer NIF library now links to the system `libcrypto`, enhancing security, performance, and compatibility with system OpenSSL updates.
-
-  **Note:** This change does not apply to RHEL 7/CentOS 7, as they continue to use OpenSSL 1.0.x.
 
 - [#14047](https://github.com/emqx/emqx/pull/14047) Lowered default `active_n` value from `100` to `10`.
 
@@ -48,7 +45,6 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
 
 #### EMQX Clustering
 
-- [#14040](https://github.com/emqx/emqx/pull/14040) Added timeouts to the internal RPC calls during node rebalance. Previously, the rebalance process could hang if a node was unresponsive.
 - [#13903](https://github.com/emqx/emqx/pull/13903) Added logs to inform the user when a replicant node cannot find a core node with the same release version as its own.
 
 #### Security
@@ -105,7 +101,6 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
 
 - [#14090](https://github.com/emqx/emqx/pull/14090) Prevented the Retainer API from crashing when the retainer feature is disabled.
 
-- [#14117](https://github.com/emqx/emqx/pull/14117) Corrected an error in the REST API documentation, which incorrectly indicated that the `Users` endpoint supported `Basic` Authentication.
 
 #### EMQX Clustering
 
@@ -113,7 +108,6 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
 
 - [#14116](https://github.com/emqx/emqx/pull/14116) Fixed an issue where the default configuration for the retainer was generated incorrectly after joining a cluster.
 
-- [#13928](https://github.com/emqx/emqx/pull/13928) Fixed an issue where a bidirectional cluster link could become stuck and unresponsive if one side disabled the link for an extended period before re-enabling it.
 
 
 - [#13929](https://github.com/emqx/emqx/pull/13929) Fixed an issue where a cluster link could occasionally become stuck and stop working until a manual restart of the upstream cluster was performed.

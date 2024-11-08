@@ -48,7 +48,6 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
 
 #### EMQX Clustering
 
-- [#14040](https://github.com/emqx/emqx/pull/14040) Added timeouts to the internal RPC calls during node rebalance. Previously, the rebalance process could hang if a node was unresponsive.
 - [#13903](https://github.com/emqx/emqx/pull/13903) Added logs to inform the user when a replicant node cannot find a core node with the same release version as its own.
 
 #### Security
@@ -73,17 +72,7 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
 
 - [#14079](https://github.com/emqx/emqx/pull/14079) Added the `max_wait_time` setting option for Kafka Consumer sources, allowing users to configure the maximum duration to wait for a fetch response from the Kafka broker.
 
-- [#14110](https://github.com/emqx/emqx/pull/14110) Added enhanced metric reporting for the Pulsar driver, including queuing, in-flight, and dropped message counts, providing greater observability.
 
-- [#14118](https://github.com/emqx/emqx/pull/14118) Added support for the `ON DUPLICATE KEY UPDATE` clause in MySQL actions.
-
-  Users can now specify `ON DUPLICATE KEY UPDATE` in `mysql` actions, for example:
-
-  ```sql
-  INSERT INTO t1 (a,b,c) VALUES (${id},${clientid},${qos}) ON DUPLICATE KEY UPDATE a=a;
-  ```
-
-  **Note:** The `ON DUPLICATE KEY UPDATE` clause does not support placeholders (`${var}`).
 
 #### Observability
 
@@ -133,7 +122,6 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
   - `live_connections`
 
 - [#14090](https://github.com/emqx/emqx/pull/14090) Prevented the Retainer API from crashing when the retainer feature is disabled.
-- [#14117](https://github.com/emqx/emqx/pull/14117) Corrected an error in the REST API documentation, which incorrectly indicated that the `Users` endpoint supported `Basic` Authentication.
 
 #### EMQX Clustering
 
@@ -166,13 +154,12 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
 
 - [#13901](https://github.com/emqx/emqx/pull/13901) Fixed prepared statements for Postgres integration. Previously, if an invalid prepared statement was used while updating a Postgres integration action (e.g., referencing an unknown table column), it could cause the action to apply an outdated prepared statement from a previous version.
 
-- [#14126](https://github.com/emqx/emqx/pull/14126) Fixed prepared statements for Oracle integration. Previously, if an invalid prepared statement was used while updating an Oracle integration action (e.g., referencing an unknown table column), it could cause the action to apply an outdated prepared statement from a previous version.
 
 - [#14005](https://github.com/emqx/emqx/pull/14005) Fixed an issue where the IoTDB Thrift driver failed to function with SSL enabled.
 
 -  [#14008](https://github.com/emqx/emqx/pull/14008) Resolved a potential race condition in actions with aggregation mode (e.g., S3, Azure Blob Storage, Snowflake) that could result in an aggregated batch being skipped during upload.
 
--  [#14015](https://github.com/emqx/emqx/pull/14015) Fixed an issue where a Kafka/Confluent/Azure Event Hub Producer action with disk buffering would not send queued messages after a restart until a new message arrived. This fix applies to actions with a fixed topic (i.e., without placeholders). Additionally, prior to EMQX 5.7.2, disk-buffered messages for Kafka/Confluent/Azure Event Hub Producer actions were stored in a different directory structure. Now, upon detecting an old disk buffer directory, EMQX will automatically rename it to the current structure to prevent data loss.
+- [#14015](https://github.com/emqx/emqx/pull/14015) Fixed an issue where a Kafka/Confluent/Azure Event Hub Producer action with disk buffering would not send queued messages after a restart until a new message arrived. This fix applies to actions with a fixed topic (i.e., without placeholders). Additionally, prior to EMQX 5.7.2, disk-buffered messages for Kafka/Confluent/Azure Event Hub Producer actions were stored in a different directory structure. Now, upon detecting an old disk buffer directory, EMQX will automatically rename it to the current structure to prevent data loss.
 
 - [#14069](https://github.com/emqx/emqx/pull/14069) Fixed prepared statements for Cassandra integration. Previously, when SQL templates in EMQX actions were modified, the updated statements could not be prepared for Cassandra, causing write failures.
 
@@ -184,7 +171,6 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
   
   ``` 2024-10-31T12:41:41.014678+00:00 [error] tag: CONNECTOR/PULSAR, msg: health_check_exception, reason: #{reason => {timeout,{gen_server,call,[<0.5877.0>,get_status,5000]}},stacktrace => [{gen_server,call,3,[{file,"gen_server.erl"},{line,419}]},{emqx_bridge_pulsar_connector,on_get_status,2,[{file,"src/emqx_bridge_pulsar_connector.erl"},{line,174}]},{emqx_resource,call_health_check,3,[{file,"src/emqx_resource.erl"},{line,550}]},{emqx_resource_manager,worker_resource_health_check,1,[{file,"src/emqx_resource_manager.erl"},{line,1149}]}],exception => exit}, resource_id: <<"connector:pulsar:a">> ``` 
 
-- [#14126](https://github.com/emqx/emqx/pull/14126) Fix prepared statements for Oracle integration. Prior to this fix, when updating a Oracle integration action, if an invalid prepared-statements is used, for example reference to an unknown table column name, it may cause the action to apply the oldest version prepared-statement from the past.
 
 #### Observability
 
