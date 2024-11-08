@@ -6,7 +6,6 @@
 - [#14121](https://github.com/emqx/emqx/pull/14121) Deprecated the `health_check_topic` configuration for Kafka Consumer Connector to avoid further confusion. This parameter was never actually used for this connector type. 
 - [#14125](https://github.com/emqx/emqx/pull/14125) For IoTDB, since the Thrift driver does not support `async` mode, an error log will now be generated if `async` mode is specified.
 - [#14015](https://github.com/emqx/emqx/pull/14015) Kafka/Confluent/Azure Event Hub Producers with a dynamic topic (i.e., a topic that contains placeholders) no longer support disk buffering. Only memory and hybrid modes are now supported.
-- [#14106](https://github.com/emqx/emqx/pull/14106) Added validation to prevent a single Kafka Consumer Connector from containing sources with duplicate Kafka topics. To use the same topic across multiple sources, create a new connector and corresponding sources.
 
 ## e5.8.1
 
