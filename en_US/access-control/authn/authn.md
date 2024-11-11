@@ -195,7 +195,7 @@ EMQX currently supports the following placeholders:
 
 - `${client_attrs.NAME}`: A client attribute. `NAME` will be replaced by an attribute name set based on predefined configurations at runtime. For details about the client attributes, see [MQTT Client Attributes](../../client-attributes/client-attributes.md).
 
-- `${zone}`: It will be replaced with the client's Zone at runtime. The `${zone}` placeholder can be used directly in authentication templates, simplifying rule creation and enabling Zone-specific configurations. For details about the Zone configuration, see [Zone Override](../../configuration/configuration.md#zone-override).
+- `${zone}`: It will be replaced with the client's Zone at runtime. The `${zone}` placeholder can be used directly in authentication templates. For details about the Zone configuration, see [Zone Override](../../configuration/configuration.md#zone-override).
 
   For example, the following ACL rule uses `${zone}` to dynamically apply permissions based on a client’s assigned Zone:
 
