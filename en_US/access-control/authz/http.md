@@ -30,8 +30,7 @@ The request can use JSON format, with the following placeholders in the URL and 
 - `${topic}`: The topic (or topic filter) to be published or subscribed in the current request.
 - `${qos}`: The QoS of the message to be published or subscribed in the current request.
 - `${retain}`: Whether the message to be published in the current request is a retained message.
-
-
+- `${zone}`: The client's Zone at runtime. The Zone is a logical classification of the client, such as region or environment, that can be dynamically applied based on the client's configuration.
 
 ### Response
 

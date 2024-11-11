@@ -180,13 +180,28 @@ SELECT password_hash, salt FROM mqtt_user where username = 'emqx_u' LIMIT 1
 EMQX currently supports the following placeholders:
 
 - `${clientid}`:  It will be replaced by the client ID at runtime. The client ID is normally explicitly specified by the client in the `CONNECT` packet. If `use_username_as_clientid` or `peer_cert_as_clientid` is enabled, this field will be overridden by the username, fields in the certificate, or the content of the certificate.
+
 - `${username}`: It will be replaced with the username at runtime. The username comes from the `Username` field in the `CONNECT` packet. If `peer_cert_as_username` is enabled, it will be overridden by the fields or the content of the certificate.
+
 - `${password}`: It will be replaced with the password at runtime. The password comes from the `Password` field in the `CONNECT` packet.
+
 - `${peerhost}`: It will be replaced with the client's IP address at runtime. EMQX supports [Proxy Protocol](http://www.haproxy.org/download/1.8/doc/proxy-protocol.txt), that is, even if EMQX is deployed behind some TCP proxy or load balancer, users can still use this placeholder to get the real IP address.
+
 - `${peername}`: It will be replaced with the client's IP address and port in runtime, and the format is `IP: PORT`.
+
 - `${cert_subject}`: It will be replaced by the subject of the client's TLS certificate at runtime. If the load balancer sends client certificate information to the TCP listener, ensure that Proxy Protocol v2 is in use.
+
 - `${cert_common_name}`: It will be replaced by the Common Name of the client's TLS certificate at runtime. If the load balancer sends client certificate information to the TCP listener, ensure that Proxy Protocol v2 is in use.
+
 - `${client_attrs.NAME}`: A client attribute. `NAME` will be replaced by an attribute name set based on predefined configurations at runtime. For details about the client attributes, see [MQTT Client Attributes](../../client-attributes/client-attributes.md).
+
+- `${zone}`: It will be replaced with the client's Zone at runtime. The `${zone}` placeholder can be used directly in authentication templates, simplifying rule creation and enabling Zone-specific configurations. For details about the Zone configuration, see [Zone Override](../../configuration/configuration.md#zone-override).
+
+  For example, the following ACL rule uses `${zone}` to dynamically apply permissions based on a client’s assigned Zone:
+
+  ```
+  {allow, all, all, ["${zone}/${username}/#"]}
+  ```
 
 ## Configure Authenticators
 
