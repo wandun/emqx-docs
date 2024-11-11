@@ -103,8 +103,6 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
   - `connections`
   - `live_connections`
 
-- [#14090](https://github.com/emqx/emqx/pull/14090) Prevented the Retainer API from crashing when the retainer feature is disabled.
-
 #### EMQX Clustering
 
 
