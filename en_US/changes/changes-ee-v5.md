@@ -56,7 +56,7 @@ Make sure to check the breaking changes and known issues before upgrading to EMQ
 
 #### Observability
 
-- [#14096](https://github.com/emqx/emqx/pull/14096) Exposed `cluster_rpc_txid` as a Prometheus metric, allowing for monitoring the configuration file synchronization status of each node in the cluster.
+- [#14096](https://github.com/emqx/emqx/pull/14096) Exposed `emqx_conf_sync_txid` as a Prometheus metric, allowing for monitoring the configuration file synchronization status of each node in the cluster.
 
 #### MQTT over QUIC
 

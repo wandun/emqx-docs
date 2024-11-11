@@ -48,7 +48,8 @@
 
 #### 可观测性
 
-- [#14096](https://github.com/emqx/emqx/pull/14096) 将 `cluster_rpc_txid` 作为 Prometheus 指标公开，支持监控集群中每个节点的配置文件同步状态。
+- [#14096](https://github.com/emqx/emqx/pull/14096) 将 `emqx_conf_sync_txid` 作为 Prometheus 指标公开，支持监控集群中每个节点的配置文件同步状态。
+
 
 #### MQTT over QUIC
 
