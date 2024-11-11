@@ -66,7 +66,7 @@
 
 #### 可观测性
 
-- [#14096](https://github.com/emqx/emqx/pull/14096) 将 `cluster_rpc_txid` 作为 Prometheus 指标公开，支持监控集群中每个节点的配置文件同步状态。
+- [#14096](https://github.com/emqx/emqx/pull/14096) 将 `emqx_conf_sync_txid` 作为 Prometheus 指标公开，支持监控集群中每个节点的配置文件同步状态。
 
 #### MQTT over QUIC
 
@@ -179,7 +179,7 @@
   {"time":"2024-10-11T06:05:07.610048+00:00","level":"error","msg":"supervisor: {esockd_connection_sup,0.53591191.0}, errorContext: connection_shutdown, reason: #{cause => invalid_topic,reason => malformed_utf8_string_length}, offender: [{pid,0.53591191.0},...]", ..., "error_logger":{"type":"supervisor_report","tag":"error_report"}}
   ```
 
-- [#14091](https://github.com/emqx/emqx/pull/14091) 实现了一个修复，以在用户提供不支持的写入语法时移除日志中的 `function_clause` 错误。
+- [#14091](https://github.com/emqx/emqx/pull/14091) 修复了 InfluxDB 数据集成中，用户提供不支持的写入语法时报告 `function_clause` 错误。
 
   不支持的语法示例：
 
