@@ -113,8 +113,6 @@
   - `connections`
   - `live_connections`
 
-- [#14090](https://github.com/emqx/emqx/pull/14090) 修复了在禁用 Retainer 功能时导致 Retainer API 崩溃的问题。
-
 - [#14117](https://github.com/emqx/emqx/pull/14117) 修正了 REST API 文档中的一个错误，该错误错误地指示 `Users` 端点支持 `Basic` 认证。
 
 #### EMQX 集群

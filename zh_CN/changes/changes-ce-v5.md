@@ -92,8 +92,6 @@
   - `connections`
   - `live_connections`
 
-- [#14090](https://github.com/emqx/emqx/pull/14090) 修复了在禁用 Retainer 功能时导致 Retainer API 崩溃的问题。
-
 #### EMQX 集群
 
 
