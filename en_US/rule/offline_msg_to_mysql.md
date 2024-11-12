@@ -23,7 +23,7 @@ Create the mqtt_msg table:
 ```sql
 DROP TABLE IF EXISTS `mqtt_msg`;
 CREATE TABLE `mqtt_msg` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `msgid` varchar(64) DEFAULT NULL,
   `topic` varchar(180) NOT NULL,
   `sender` varchar(64) DEFAULT NULL,

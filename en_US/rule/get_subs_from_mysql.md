@@ -24,7 +24,7 @@ Create the mqtt_sub table:
 DROP TABLE IF EXISTS `mqtt_sub`;
 
 CREATE TABLE `mqtt_sub` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `clientid` varchar(64) DEFAULT NULL,
   `topic` varchar(180) DEFAULT NULL,
   `qos` tinyint(1) DEFAULT NULL,

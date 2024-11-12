@@ -59,7 +59,7 @@ MySQL 认证插件默认配置下需要确保数据库中有以下两张数据�
 
 ```sql
 CREATE TABLE `mqtt_user` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(100) DEFAULT NULL,
   `password` varchar(100) DEFAULT NULL,
   `salt` varchar(35) DEFAULT NULL,
@@ -83,7 +83,7 @@ VALUES
 
 ```sql
 CREATE TABLE `mqtt_acl` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `allow` int(1) DEFAULT 1 COMMENT '0: deny, 1: allow',
   `ipaddr` varchar(60) DEFAULT NULL COMMENT 'IpAddress',
   `username` varchar(100) DEFAULT NULL COMMENT 'Username',

@@ -57,7 +57,7 @@ MySQL 认证默认配置下需要确保数据库中有下表：
 
 ```sql
 CREATE TABLE `mqtt_user` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(100) DEFAULT NULL,
   `password` varchar(100) DEFAULT NULL,
   `salt` varchar(35) DEFAULT NULL,
