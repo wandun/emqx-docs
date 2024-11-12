@@ -62,17 +62,3 @@
 - **节点崩溃竞态条件（始于 5.0，已在 5.8.1 中修复）**
 
   如果节点在 RPC 通道建立过程中关闭，可能导致对等节点崩溃。
-
-- **删除与 Source 名称相同的 Action 时出现 500 错误（始于 5.5.0）**
-
-  在 Dashboard 数据集成中，如果 Action 列表中的一个 Action 条目的名称与 Source 列表中的一个 Source 条目名称相同，删除该 Action 条目将返回错误代码 500。
-
-  错误关键词示例：`{name_clash_action_source, mqtt, <<"test">>}`，其中 `mqtt` 和 `test` 分别是具有相同名称的 Source 条目的类型和名称。
-
-  > **解决方法：** 您可以执行以下命令来删除该 Action 条目，例如：
-  >
-  > ```bash
-  > ./bin/emqx eval 'emqx_bridge_v2:remove(mqtt, <<"test">>)'
-  > ```
-  >
-  > 然后，您需要检查规则列表并删除与此 Action 关联的任何规则。

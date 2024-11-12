@@ -1,5 +1,11 @@
 # EMQX 5.8 中的不兼容变更
 
+## e5.8.2
+
+- [#14004](https://github.com/emqx/emqx/pull/14004) 修复了集群连接中的一个问题，即在 `topics` 配置中，重叠的主题过滤器导致跨集群消息路由不一致且不完整。现在每个主题过滤器都会被单独处理，因此在集群连接的 `topics` 配置中，重叠的主题过滤器（例如，`t/1` 和 `t/+`）现在被视为无效配置。如果检测到重叠过滤器，连接将无法启动，以防止路由问题。
+- [#14015](https://github.com/emqx/emqx/pull/14015) Kafka/Confluent/Azure Event Hub Producer 动作不再支持带有动态主题（即包含占位符的主题）的磁盘缓冲。现在仅支持内存和混合模式。
+- [#14106](https://github.com/emqx/emqx/pull/14106) 增加了验证，防止单个 Kafka 消费者连接器包含具有重复 Kafka 主题的 source。如果需要在多个 source 中使用相同的主题，请创建新的连接器及相应的 source。
+
 ## e5.8.1
 
 - [#13792](https://github.com/emqx/emqx/pull/13792) 在新增黑名单记录时，对于未指定 `until`  参数的默认过期时间已从 1 年改为 `无限期`。

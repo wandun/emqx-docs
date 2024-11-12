@@ -1,5 +1,208 @@
 # EMQX 企业版 v5 版本
 
+## 5.8.2
+
+*发布日期：2024-11-12*
+
+升级前请查看已知问题列表和不兼容变更列表。
+
+### 增强
+
+#### 核心 MQTT 功能
+
+- [#14059](https://github.com/emqx/emqx/pull/14059) 为保留消息功能新增了一个配置选项，用于限制保留消息的过期时间间隔。如果存储空间不足，该选项可以使垃圾回收更早地清除消息。
+
+- [#14072](https://github.com/emqx/emqx/pull/14072) 更新了虚拟机的可显示范围以支持 Unicode。此改进提升了消息中某些二进制数据的可读性。例如，之前显示为 `<<116,101,115,116,228,184,173,230,150,135>>` 的二进制数据现在将被格式化为 `<<"test中文"/utf8>>`，提供了更清晰的表示。
+
+#### MQTT 会话持久化
+
+- [#14130](https://github.com/emqx/emqx/pull/14130) 降低了空闲持久会话的 CPU 使用率。之前，空闲的持久会话需要定期唤醒以刷新 DS 流的列表。此更改使流发现改为基于事件触发，从而显著降低空闲期间的 CPU 消耗。此外，此更新减少了通知会话新流的延迟，有效地消除了端到端处理中的长尾延迟。
+
+#### REST API
+
+- [#13889](https://github.com/emqx/emqx/pull/13889) 提升了 `/api/v5/monitor_current` 和 `/api/v5/metrics` API 的性能。
+
+  之前，这些 API 会按顺序逐个查询集群中的节点。现在，查询已改为并行发送，从而缩短了响应时间。目前，延迟主要取决于集群中最慢的节点。
+
+  此外，`/api/v5/monitor_current` API 新增了 `node` 参数，使用户可以针对单个节点进行查询，而无需查询整个集群。例如，使用 `?aggregate=false&node=emqx@node1.domain.name` 将仅返回指定节点的数据。
+
+#### EMQX 集群
+
+- [#13903](https://github.com/emqx/emqx/pull/13903) 增加了日志，当副本节点找不到与其自身相同版本的核心节点时，会提示用户。
+
+#### 安全
+
+- [#13923](https://github.com/emqx/emqx/pull/13923) 在认证、授权和挂载点模板中添加了对 `zone` 的支持。
+
+  此前，若需在认证或授权规则中引用客户端的 `zone`，用户必须通过 `client_attrs` 访问。现在，可以直接在这些模板中使用 `${zone}` 占位符，简化了规则创建，并支持基于 zone 的特定配置。
+
+  例如，以下 ACL 规则使用 `${zone}` 根据客户端的分配 zone 动态应用权限：`{allow, all, all, ["${zone}/${username}/#"]}`。
+
+- [#14102](https://github.com/emqx/emqx/pull/14102) 增加了从密钥文件读取 SSL 私钥密码的支持。
+
+  如果将 `password` 配置为 `...ssl.password = "file://{path-to-secret-file}"`，EMQX 现在可以从密钥文件中读取密码。
+
+#### 数据集成
+
+- [#14065](https://github.com/emqx/emqx/pull/14065) 为数据集成添加了新的 `queuing_bytes` 指标。该指标显示特定动作在缓冲过程中消耗的 RAM 和/或磁盘资源。目前，Pulsar 生产者动作是唯一不支持该指标的动作。
+
+- [#14044](https://github.com/emqx/emqx/pull/14044) 增强了 IoTDB Thrift 驱动，使其支持在 `server` 字段中配置多个地址。如果当前连接失败，驱动将尝试连接下一个地址。
+
+- [#14048](https://github.com/emqx/emqx/pull/14048) 提高了 Kafka/Confluent/Azure Event Hub 生产者动作的稳定性。一旦这些动作成功创建并处于健康状态，在检测到未知主题时将不再被标记为不健康。相反，它们会在这种情况下继续将消息排入队列。
+
+- [#14079](https://github.com/emqx/emqx/pull/14079) 为 Kafka 消费者 source 添加了 `max_wait_time` 设置选项，允许用户配置等待 Kafka broker 发送响应对象的最大时间。
+
+- [#14110](https://github.com/emqx/emqx/pull/14110) 为 Pulsar 驱动添加了增强的指标报告，包括排队消息、传输中消息和丢弃消息的计数，从而提供更高的可观察性。
+
+- [#14118](https://github.com/emqx/emqx/pull/14118) 为 MySQL 动作添加了对 `ON DUPLICATE KEY UPDATE` 子句的支持。
+
+  用户现在可以在 `mysql` 动作中指定 `ON DUPLICATE KEY UPDATE`，例如：
+
+  ```sql
+  INSERT INTO t1 (a,b,c) VALUES (${id},${clientid},${qos}) ON DUPLICATE KEY UPDATE a=a;
+  ```
+
+  **Note:** `ON DUPLICATE KEY UPDATE` 子句不支持占位符（`${var}`）。
+
+#### 可观测性
+
+- [#14096](https://github.com/emqx/emqx/pull/14096) 将 `emqx_conf_sync_txid` 作为 Prometheus 指标公开，支持监控集群中每个节点的配置文件同步状态。
+
+#### MQTT over QUIC
+
+- [#13814](https://github.com/emqx/emqx/pull/13814) 为基于 QUIC 的多流 MQTT 引入了连接范围内的 Keepalive 机制：
+
+  引入了一项新功能，当数据流保持活动状态时，即使控制流处于空闲状态，MQTT 连接也会保持存活。
+
+  之前，客户端需要在空闲的控制流上发送 `MQTT.PINGREQ` 来保持连接。现在，每个连接的所有流共享一个状态，用于跟踪活动情况。该共享状态用于判断连接是否仍然存活，从而降低了因队头阻塞（Head-of-Line, HOL）而导致 Keepalive 超时的风险。
+
+- [#14112](https://github.com/emqx/emqx/pull/14112) 在 QUIC 监听器中增加了对 `ssl_options.hibernate_after` 的支持，以减少 QUIC 传输的内存占用。
+
+- [#13984](https://github.com/emqx/emqx/pull/13984) Quicer NIF 库现已链接到系统的 `libcrypto`，从而提升了安全性、性能和与系统 OpenSSL 更新的兼容性。
+
+  **注意：** 此更改不适用于 RHEL 7/CentOS 7，因为这些系统仍在使用 OpenSSL 1.0.x。
+
+### 修复
+
+#### 核心 MQTT 功能
+
+- [#13931](https://github.com/emqx/emqx/pull/13931) 将 `gen_rpc` 库更新至 3.4.1 版本，其中包含一个修复，防止客户端 socket 初始化错误在服务端升级到节点级别。
+- [#13969](https://github.com/emqx/emqx/pull/13969) 优化了过期保留消息的定期清理，以确保资源的高效使用，尤其是在处理大量过期消息的情况下。
+- [#14068](https://github.com/emqx/emqx/pull/14068) 为所有网关实现模块添加了 `handle_frame_error/2` 回调，用于处理消息解析错误。
+- [#14037](https://github.com/emqx/emqx/pull/14037) 改进了内部数据库的引导过程，以更好地容忍节点临时不可用的情况，特别是在新节点加入现有集群时。
+- [#14116](https://github.com/emqx/emqx/pull/14116) 修复了在加入集群后，保留消息的默认配置生成不正确的问题。
+
+#### MQTT 会话持久化
+
+- [#14042](https://github.com/emqx/emqx/pull/14042) 修复了在更新订阅参数（如 QoS、`no_local`、`upgrade_qos` 等）后持久会话崩溃的问题。
+- [#14052](https://github.com/emqx/emqx/pull/14052) 修正了 cgroups 在启用时的内存使用报告。
+- [#14055](https://github.com/emqx/emqx/pull/14055) 更新了 `/clients_v2` API，在查询具有持久会话的离线客户端时正确应用所有过滤参数。此前，只有 `username` 过滤器生效，其他过滤参数被忽略。
+- [#14151](https://github.com/emqx/emqx/pull/14151) 修复了 `/clients_v2` API 中对具有持久会话的离线客户端的 `conn_state` 过滤器的处理问题。此前，这些客户端可能会被错误地筛选为 `conn_state=connected`。
+- [#14057](https://github.com/emqx/emqx/pull/14057) 解决了一个兼容性问题，该问题导致 Messages DS 数据库因数据库配置模式的轻微差异而无法启动。当从 EMQX 5.7.x 版本升级到更高版本时，如果会话持久性功能被启用，就会出现这个兼容性问题。
+
+#### REST API
+
+- [#14023](https://github.com/emqx/emqx/pull/14023) 修复了 `GET /monitor` HTTP API 的一个问题，在某些时间窗口下，返回的值可能会比实际值更高。对于 1 小时内的数据点，此失真仅在 Dashboard 上呈现为视觉上的误差。然而，对于超过 1 小时的数据点，该数据失真则是永久性的。
+
+  受影响的指标包括：
+
+  - `disconnected_durable_sessions`
+  - `subscriptions_durable`
+  - `subscriptions`
+  - `topics`
+  - `connections`
+  - `live_connections`
+
+- [#14117](https://github.com/emqx/emqx/pull/14117) 修正了 REST API 文档中的一个错误，该错误错误地指示 `Users` 端点支持 `Basic` 认证。
+
+#### EMQX 集群
+
+
+- [#13996](https://github.com/emqx/emqx/pull/13996) 修复了在使用 `emqx conf fix` 解决配置差异时的间歇性崩溃问题，尤其是在某个节点缺少配置键的情况下。
+
+#### 安全
+
+- [#13922](https://github.com/emqx/emqx/pull/13922) 更新了 CRL（证书吊销列表）缓存，以完整的分发点（DP）URL 作为缓存键。此前仅使用了 URL 的路径部分，当多个 DP 共享相同路径时会导致冲突。
+- [#13924](https://github.com/emqx/emqx/pull/13924) 修复了一个问题，该问题可能导致 JWT 认证失败时 JWK 密钥泄露到 debug 日志中。
+- [#13998](https://github.com/emqx/emqx/pull/13998) 修复了一个问题，即如果 OIDC 配置不正确，会导致 SSO 功能崩溃。
+
+#### 数据集成
+
+- [#13916](https://github.com/emqx/emqx/pull/13916) 修复了一个问题，即当规则的 `failed.no_result` 或 `failed.exception` 指标更新时，父级指标 `failed` 未被相应地递增。
+- [#14001](https://github.com/emqx/emqx/pull/14001) 解决了一个竞争条件问题，即资源（如连接器、动作、source、认证或授权）在短暂断开连接后可能错误地报告通道已连接且健康。此问题可能会导致大量 `action_not_found` 日志条目。
+- [#13913](https://github.com/emqx/emqx/pull/13913) 修复了 actions 和 source HTTP API 的一个问题，如果在更新或删除资源时发生超时，将返回 500 状态码。
+- [#14101](https://github.com/emqx/emqx/pull/14101) 解决了一个问题，即如果 source 和动作的名称相同，则删除其中任一项资源会失败。
+- [#13901](https://github.com/emqx/emqx/pull/13901) 修复了 Postgres 集成的预处理语句问题。此前，如果在更新 Postgres 集成动作时使用了无效的预处理语句（例如引用了未知的表列），可能导致动作应用旧版本的预处理语句。
+
+
+- [#14005](https://github.com/emqx/emqx/pull/14005) 修复了 IoTDB Thrift 驱动在启用 SSL 时无法正常工作的问题。
+
+- [#14125](https://github.com/emqx/emqx/pull/14125) 对于 IoTDB，由于 Thrift 驱动从未支持过 `async` 模式，现在如果在配置中指定了 `async` 模式，将会生成一条错误日志。
+
+- [#14008](https://github.com/emqx/emqx/pull/14008) 解决了具有聚合模式的动作（例如 S3、Azure Blob Storage、Snowflake）中的潜在竞争条件，该问题可能导致上传过程中跳过某个聚合批次。
+
+- [#14015](https://github.com/emqx/emqx/pull/14015) 修复了 Kafka/Confluent/Azure Event Hub Producer 动作的一个问题。在启用了磁盘缓冲的情况下，重启后这些动作不会发送已排队的消息，直到新的消息到达。此修复适用于固定主题（即不包含占位符）的动作。此外，在 EMQX 5.7.2 之前，Kafka/Confluent/Azure Event Hub Producer 动作的磁盘缓冲消息存储在不同的目录结构中。现在，如果检测到旧的磁盘缓冲目录，EMQX 将自动重命名为当前结构，以防止数据丢失。
+
+- [#14069](https://github.com/emqx/emqx/pull/14069) 修复了 Cassandra 集成的预处理语句问题。此前，当 EMQX 动作中的 SQL 模板被修改时，更新的语句无法为 Cassandra 预处理，导致写入失败。
+
+- [#14079](https://github.com/emqx/emqx/pull/14079) 解决了 Kafka 消费者在多个分区共享同一分区 leader 时的延迟问题。此前，由于 Kafka 每个连接只能同时处理一个进行中的 fetch 请求，导致了队头阻塞。此修复确保每个分区消费者都建立自己的 TCP 连接到分区 leader，以防止分区共享 leader 时的延迟。
+
+- [#14106](https://github.com/emqx/emqx/pull/14106) 增加了验证，防止单个 Kafka 消费者连接器包含具有重复 Kafka 主题的 source。
+
+- [#14120](https://github.com/emqx/emqx/pull/14120) 改进了 Pulsar 连接器健康检查中的超时处理，以减少不必要的日志噪音。
+
+  之前，超时可能会生成重复的错误日志。例如：
+
+  ``` 2024-10-31T12:41:41.014678+00:00 [error] tag: CONNECTOR/PULSAR, msg: health_check_exception, reason: #{reason => {timeout,{gen_server,call,[<0.5877.0>,get_status,5000]}},stacktrace => [{gen_server,call,3,[{file,"gen_server.erl"},{line,419}]},{emqx_bridge_pulsar_connector,on_get_status,2,[{file,"src/emqx_bridge_pulsar_connector.erl"},{line,174}]},{emqx_resource,call_health_check,3,[{file,"src/emqx_resource.erl"},{line,550}]},{emqx_resource_manager,worker_resource_health_check,1,[{file,"src/emqx_resource_manager.erl"},{line,1149}]}],exception => exit}, resource_id: <<"connector:pulsar:a">> ``` 
+
+#### 可观测性
+
+- [#13909](https://github.com/emqx/emqx/pull/13909) 修复了日志格式问题，解决了无法将负载显示为可读 UTF-8 Unicode 字符的情况。
+
+- [#14061](https://github.com/emqx/emqx/pull/14061) 改进了 `emqx_cm:request_stepdown/3` 失败时的日志信息。
+
+  在某些场景下，当一个客户端通道需要终止另一个具有相同 ClientID 的通道时，可能会出现竞争条件，如果目标通道已经关闭或终止，则不会再生成无用的错误日志和堆栈信息。
+
+- [#14070](https://github.com/emqx/emqx/pull/14070) 从错误和警告日志中移除了连接器的 `state` 信息，因为其长度可能过长。对于问题分析，现在可以通过 `emqx_resource:list_instances_verbose/0` 来获取连接器的状态。以下是变更前的日志示例：
+
+  ```
+  pid: <0.43914.0>, connector: connector:sqlserver:connector-05a2e105, reason: [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Argument data type varchar is invalid for argument 2 of dateadd function. SQLSTATE IS: 42000, state: {"resource_opts":{"start_timeout":5000,"start_after_created":true,"health_check_interval":15000},"pool_name":"connector:sqlserver:connector-05a2e105","installed_channels":{"action:sqlserver:action-4b033621:connector:sqlserver:connector-05a2e105":{"sql_templates":{"batch_insert_temp":{"send_message":{"batch_insert_tks":["{str,<<\" ( \">>}","{var,[<<\"messageId\">>]}","{str,<<\", \">>}","{var,[<<\"measurement\">>]}","{str,<<\", \">>}","{var,[<<\"Analog_IN_Fault_1\">>]}","{str,<<\", \">>}","{var,[<<\"Analog_IN_Fault_2\">>]}","{str,<<\", \">>}","{var,[<<\"Analog_IN_Fault_3\">>]}","{str,<<\", \">>}","{var,[<<\"Analog_IN_Fault_4\">>]}","{str,<<\", \">>}","{var,[<<\"Analog_IN_PV_1\">>]}","{str,<<\", \">>}","{var,[<<\"Analog_IN_PV_2\">>]}","{str,<<\", \">>}","{var,[<<\"Analog_IN_PV_3\">>]}","{str,<<\", \">>}","{var,[<<\"Analog_IN_PV_4\">>]}","{str,<<\", DATEADD(MS, \">>}","{var,[<<\"ms_shift\">>]}","{str,<<\", DATEADD(S, \">>}","{var,[<<\"s_shift\">>]}","{str,<<\", '19700101 00:00:00:000') ))\">>}"],"batch_insert_part":"insert into TransactionLog(MessageId, Measurement, Fault1, Fault2, Fault3, Fault4, Value1, Value2, Value3, Value4, DateStamp) \r\n"}}}}}},msg: invalid_request
+  ```
+
+- [#14099](https://github.com/emqx/emqx/pull/14099) 移除了在验证 MQTT 消息中的 UTF-8 字符串失败时触发的错误级日志。
+
+  被移除的日志示例如下：
+
+  ```
+  {"time":"2024-10-11T06:05:07.610048+00:00","level":"error","msg":"supervisor: {esockd_connection_sup,0.53591191.0}, errorContext: connection_shutdown, reason: #{cause => invalid_topic,reason => malformed_utf8_string_length}, offender: [{pid,0.53591191.0},...]", ..., "error_logger":{"type":"supervisor_report","tag":"error_report"}}
+  ```
+
+- [#14091](https://github.com/emqx/emqx/pull/14091) 修复了 InfluxDB 数据集成中，用户提供不支持的写入语法时报告 `function_clause` 错误。
+
+  不支持的语法示例：
+
+  ```bash
+  weather,location=us-midwest,season=summer temperature=82 ${timestamp}u 
+  ```
+
+  在此修复之前，错误日志中会包含 `function_clause` 错误，如下所示：
+
+  ```
+  pid: <0.558392.0>, info: {"stacktrace":["{emqx_bridge_influxdb_connector,parse_timestamp,[[1719350482910000000,<<\"u\">>]],[{file,\"emqx_bridge_influxdb_connector.erl\"},{line,692}]}", ...], ..., "error":"{error,function_clause}"}, tag: ERROR, msg: resource_exception
+  ```
+
+  该更改通过在语法错误情况下省略 `function_clause` 提升了日志的清晰度。
+
+#### 审计日志
+
+- [#14152](https://github.com/emqx/emqx/pull/14152) 实现了日志截断功能，以防止存储过长的审计日志内容。
+
+#### 集群连接
+
+
+- [#14004](https://github.com/emqx/emqx/pull/14004) 修复了集群连接中的一个问题，即在 `topics` 配置中，重叠的主题过滤器导致跨集群消息路由不一致且不完整。现在每个主题过滤器都会被单独处理；但需要注意的是，重叠的过滤器可能会增加跨集群路由的复杂性。
+- [#13929](https://github.com/emqx/emqx/pull/13929) 修复了一个问题，即集群连接偶尔会卡住并停止工作，直到手动重启上游集群后才能恢复。
+
 ## 5.8.1
 
 *发布日期：2024-10-14*
