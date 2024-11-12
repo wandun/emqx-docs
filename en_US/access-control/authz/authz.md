@@ -93,6 +93,7 @@ The following placeholders are supported in query statements:
 * `${cert_common_name}`: It is replaced by the Common Name of the client's TLS certificate at runtime. If the load balancer sends client certificate information to the TCP listener, ensure that Proxy Protocol v2 is in use.
 * `${cert_subject}`:  It is replaced by the subject of the client's TLS certificate at runtime. If the load balancer sends client certificate information to the TCP listener, ensure that Proxy Protocol v2 is in use.
 * `${client_attrs.NAME}`:  A client attribute. `NAME` will be replaced by an attribute name set based on predefined configurations at runtime. For details about the client attributes, see [MQTT Client Attributes](../../client-attributes/client-attributes.md).
+* `${zone}`: It will be replaced with the client's Zone at runtime. The `${zone}` placeholder can be used directly in authorization templates. For details about the Zone configuration, see [Zone Override](../../configuration/configuration.md#zone-override).
 
 #### Topic Placeholders
 

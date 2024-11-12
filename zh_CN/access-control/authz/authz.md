@@ -94,6 +94,7 @@ EMQX 授权支持的数据查询占位符如下：
 - `${cert_common_name}`: 将在运行时被替换为客户端 TLS 证书的通用名称（Common Name）。如果证书信息是从负载均衡器发送到 EMQX 的 TCP 端口，需要确保负载均衡器使用的是 Proxy Protocol v2。
 - `${cert_subject}`: 将在运行时被替换为客户端 TLS 证书的主题（Subject）。如果证书信息是从负载均衡器发送到 EMQX 的 TCP 端口，需要确保负载均衡器使用的是 Proxy Protocol v2。
 - `${client_attrs.NAME}`: 某个客户端属性。`NAME` 将在运行时根据预定义配置替换为属性名称。有客户端属性的详细信息，请参见 [MQTT 客户端属性](../../client-attributes/client-attributes.md)。
+- `${zone}`: 在运行时将替换为客户端的 Zone。`${zone}` 占位符可以直接用于授权模板中。有关 Zone 的详细配置信息，请参见 [Zone 覆盖](../../configuration/configuration.md#zone-覆盖)。
 
 <!-- TODO
 确认 HTTP AuthZ 为什么会多出几个
