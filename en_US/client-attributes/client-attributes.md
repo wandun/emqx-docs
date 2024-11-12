@@ -40,7 +40,7 @@ Where,
 - **Attribute** is the name of the attribute. 
 - **Attribute Expression** is the configuration for extracting the attribute.
 
-The attribute expression upports using [Variform expressions](../configuration/configuration.md#variform-expressions) and [predefined functions](../configuration/configuration.md#pre-defined-functions) to dynamically process values. For example:
+The attribute expression supports using [Variform expressions](../configuration/configuration.md#variform-expressions) and [predefined functions](../configuration/configuration.md#pre-defined-functions) to dynamically process values. For example:
 
 - To extract the prefix of a client ID delimited by a dot: `nth(1, tokens(clientid, '.'))`
 - To truncate part of the username: `substr(username, 0, 5)`
