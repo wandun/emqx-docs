@@ -111,7 +111,7 @@ mysql -u root -p mqtt < etc/sql/emqx_backend_mysql.sql
 ```sql
 DROP TABLE IF EXISTS `mqtt_client`;
 CREATE TABLE `mqtt_client` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `clientid` varchar(64) DEFAULT NULL,
   `state` varchar(3) DEFAULT NULL,
   `node` varchar(64) DEFAULT NULL,
@@ -163,7 +163,7 @@ select * from mqtt_client where clientid = "test";
 ```sql
 DROP TABLE IF EXISTS `mqtt_sub`;
 CREATE TABLE `mqtt_sub` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `clientid` varchar(64) DEFAULT NULL,
   `topic` varchar(180) DEFAULT NULL,
   `qos` tinyint(1) DEFAULT NULL,
@@ -209,7 +209,7 @@ select * from mqtt_sub where clientid = "test";
 ```sql
 DROP TABLE IF EXISTS `mqtt_msg`;
 CREATE TABLE `mqtt_msg` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `msgid` varchar(64) DEFAULT NULL,
   `topic` varchar(180) NOT NULL,
   `sender` varchar(64) DEFAULT NULL,
@@ -250,7 +250,7 @@ mqtt_retain 存储 retain 消息:
 ```sql
 DROP TABLE IF EXISTS `mqtt_retain`;
 CREATE TABLE `mqtt_retain` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `topic` varchar(180) DEFAULT NULL,
   `msgid` varchar(64) DEFAULT NULL,
   `sender` varchar(64) DEFAULT NULL,
@@ -292,10 +292,10 @@ select * from mqtt_retain where topic = "retain";
 ```sql
 DROP TABLE IF EXISTS `mqtt_acked`;
 CREATE TABLE `mqtt_acked` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `clientid` varchar(64) DEFAULT NULL,
   `topic` varchar(180) DEFAULT NULL,
-  `mid` int(11) unsigned DEFAULT NULL,
+  `mid` bigint unsigned DEFAULT NULL,
   `created` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `mqtt_acked_key` (`clientid`,`topic`)

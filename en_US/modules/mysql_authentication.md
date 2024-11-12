@@ -32,7 +32,7 @@ Finally click the "Add" button, the module can be added successfully
 
 ```sql
 CREATE TABLE `mqtt_user` (
-  ʻId` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  ʻId` bigint unsigned NOT NULL AUTO_INCREMENT,
   ʻUsername` varchar(100) DEFAULT NULL,
   `password` varchar(100) DEFAULT NULL,
   `salt` varchar(35) DEFAULT NULL,
@@ -96,7 +96,7 @@ If the default query conditions do not meet your needs, for example, you need to
 
 ```sql
 CREATE TABLE `mqtt_acl` (
-  ʻId` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  ʻId` bigint unsigned NOT NULL AUTO_INCREMENT,
   ʻAllow` int(1) DEFAULT 1 COMMENT '0: deny, 1: allow',
   ʻIpaddr` varchar(60) DEFAULT NULL COMMENT'IpAddress',
   ʻUsername` varchar(100) DEFAULT NULL COMMENT'Username',

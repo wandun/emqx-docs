@@ -28,7 +28,7 @@ USE test;
 
 ```sql
 CREATE TABLE `t_mqtt_msg` (
-    `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `id` bigint unsigned NOT NULL AUTO_INCREMENT,
     `msgid` varchar(64) DEFAULT NULL,
     `topic` varchar(255) NOT NULL,
     `qos` tinyint(1) NOT NULL DEFAULT '0',
