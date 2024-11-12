@@ -765,6 +765,12 @@ This version update includes 4 enhancements and 7 fixes.
   2023-03-08T14:26:50.935575+08:00 [debug] mqttx_e34bd582@127.0.0.1:54020 [MQTT] RECV PUBLISH(Q1, R0, D0, Topic=t/1, PacketId=39467, Payload=<<"e\ne\nc\nc\n2\n\n\n">>)
   ```
 
+- Fixed an issue where the topic rewrite (topic_rewrite) module failed to convert `$SYS` topics:
+
+  ```
+  {error,badarg,{re,replace,[<<"topic/a/..."">>, "%c", emqx_mod_presence, [global]]}}
+  ```
+
 ## 4.4.15
 
 *Release Date: 2023-03-03*
