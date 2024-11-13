@@ -2,14 +2,6 @@
 
 ## e5.8.2
 
-- **IoTDB May Not Work Properly in Batch Mode when `batch_size > 1`**
-
-  This issue arises because EMQX uses the IoTDB v1 API, which lacks native support for batch operations. To simulate batch functionality, an iterative approach is used; however, this method is not atomic and may lead to bugs.
-
-- **The Thrift Driver for IoTDB Does Not Support `async` Mode**
-
-## e5.8.1
-
 - **Node Crash if Linux monotonic clock steps backward (since 5.0)**
 
   In certain virtual Linux environments, the operating system is unable to keep the clocks monotonic,
@@ -26,7 +18,19 @@
 
   <!-- https://emqx.atlassian.net/browse/EMQX-12290 -->
 
-- **Kafka Disk Buffer Directory Name (since 5.8.0)**
+- **IoTDB May Not Work Properly in Batch Mode when `batch_size > 1`**
+
+  This issue arises because EMQX uses the IoTDB v1 API, which lacks native support for batch operations. To simulate batch functionality, an iterative approach is used; however, this method is not atomic and may lead to bugs.
+
+- **The Thrift Driver for IoTDB Does Not Support `async` Mode**
+
+- **Limitation in SAML-Based SSO (since 5.3)**
+
+  EMQX Dashboard supports Single Sign-On based on the Security Assertion Markup Language (SAML) 2.0 standard and integrates with Okta and OneLogin as identity providers. However, the SAML-based SSO currently does not support a certificate signature verification mechanism and is incompatible with Azure Entra ID due to its complexity.
+
+## e5.8.1
+
+- **Kafka Disk Buffer Directory Name (since 5.8.0, fixed in 5.8.2)**
 
   The introduction of a dynamic topic template for Kafka (Azure EventHubs, Confluent Platform) producer integration imposed an incompatible change for the on-disk buffer directory name.
   If `disk` mode buffer is used, please wait for the 5.8.2 release to avoid buffered messages getting lost after upgrade from an older version.
@@ -34,26 +38,20 @@
 
   <!-- https://emqx.atlassian.net/browse/EMQX-13248 -->
 
-- **Kafka Disk Buffer Resume (since 5.8.0)**
+- **Kafka Disk Buffer Resume (since 5.8.0, fixed in 5.8.2)**
 
   If `disk` mode buffer is used, Kafka (Azure EventHubs, Confluent Platform) producers will not automatically start sending data from disk to Kafka after node restart. The sending will be triggered only after there is a new message to trigger the dynamic add of a topic producer.
-  This issue will be fixed in 5.8.2.
 
   <!-- https://emqx.atlassian.net/browse/EMQX-13242 -->
 
-- **Limitation in SAML-Based SSO (since 5.3)**
-
-  EMQX Dashboard supports Single Sign-On based on the Security Assertion Markup Language (SAML) 2.0 standard and integrates with Okta and OneLogin as identity providers. However, the SAML-based SSO currently does not support a certificate signature verification mechanism and is incompatible with Azure Entra ID due to its complexity.
-
-- **Performance Degradation When Viewing Audit Events (since 5.4.0)**
+- **Performance Degradation When Viewing Audit Events (since 5.4.0, fixed in 5.8.2)**
 
   Enabling the audit log and viewing specific events in the Dashboard can, in rare cases, cause significant performance degradation or even crash the EMQX node in exceptional situations, particularly on memory-constrained nodes. Events known to cause this issue include Backup and Restore API requests and commands executed in the EMQX remote console that manipulate large data structures. Nodes may also take longer to start and become responsive in these situations.
-  This issue will be fixed in 5.8.2.
 
   > **Workaround:**
   > Adjust the **Max Dashboard Record Size** through the Dashboard, or lower the `log.audit.max_filter_size` setting. Over time, problematic events will be cleared from the Audit log as new events are recorded.
 
-- **Distorted Gauge Values in `GET /monitor` HTTP API and Dashboard**
+- **Distorted Gauge Values in `GET /monitor` HTTP API and Dashboard (since 5.8.1, fixed in 5.8.2)**
 
   When using the `GET /monitor` HTTP API, which also provides data for the Dashboard, changing the time window from 1 hour to a larger time frame may cause fresh data points (collected within the past hour) to appear distorted.  For instance, three connections may incorrectly display as nine or more. This issue is purely visual for data points within the past hour. However, for data older than 1 hour, the distortion is irreversible.
 
