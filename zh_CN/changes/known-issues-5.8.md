@@ -14,11 +14,11 @@
 
   <!-- https://emqx.atlassian.net/browse/EMQX-12290 -->
 
-- **IoTDB 在批处理模式下（当 `batch_size > 1` 时）可能无法正常工作**
+- **IoTDB 在批处理模式下（当 `batch_size > 1` 时）可能无法正常工作 (始于 5.0)**
 
   出现该问题的原因是 EMQX 使用了 IoTDB v1 API，而该 API 不支持原生的批处理操作。为模拟批处理操作，系统采用了迭代方式，然而，此方法不是原子的，可能会导致出现错误。
 
-- **IoTDB 的 Thrift 驱动不支持 `async` 模式**
+- **IoTDB 的 Thrift 驱动不支持 `async` 模式 (始于 5.8.1)**
 
 - **基于 SAML 的单点登录限制（始于 5.3）**
 

@@ -18,11 +18,11 @@
 
   <!-- https://emqx.atlassian.net/browse/EMQX-12290 -->
 
-- **IoTDB May Not Work Properly in Batch Mode when `batch_size > 1`**
+- **IoTDB May Not Work Properly in Batch Mode when `batch_size > 1` (since 5.0)**
 
   This issue arises because EMQX uses the IoTDB v1 API, which lacks native support for batch operations. To simulate batch functionality, an iterative approach is used; however, this method is not atomic and may lead to bugs.
 
-- **The Thrift Driver for IoTDB Does Not Support `async` Mode**
+- **The Thrift Driver for IoTDB Does Not Support `async` Mode (since 5.8.1)**
 
 - **Limitation in SAML-Based SSO (since 5.3)**
 
