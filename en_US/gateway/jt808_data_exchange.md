@@ -111,7 +111,7 @@ Empty JSON
 | :--------------------: | :------------: | :--------: | :----------------: |
 |      Province ID       |    province    |    word    |      integer       |
 |        City ID         |      city      |    word    |      integer       |
-|    Manufacturer ID     |  manufacture   |  byte(5)   |       string       |
+|    Manufacturer ID     |  manufacturer  |  byte(5)   |       string       |
 |     Terminal Model     |     model      |  byte(20)  |       string       |
 |      Terminal ID       |     dev_id     |  byte(7)   |       string       |
 |     Vehicle Color      |     color      |    byte    |      integer       |
