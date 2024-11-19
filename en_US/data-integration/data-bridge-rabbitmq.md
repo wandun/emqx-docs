@@ -163,6 +163,13 @@ This section demonstrates how to create a rule in the Dashboard for processing m
 
    * **Routing Key**: Enter `test_routing_key` created before, which is the RabbitMQ routing key to be used when publishing messages.
 
+       ::: tip
+        The **Exchange** and **Routing Key** can be configured as template values.
+        For example, to extract the routing key from the payload, we could set **Routing Key** to "${payload.akey}".
+
+        Note, the templated **Exchange** and **Routing Key** are restricted in batch mode: We always assume that the value of them is the same for every message in a batch.
+       :::
+
    * **Virtual Host**: Enter RabbitMQ virtual host;  `/` by default.
 
    * In the **Message Delivery Mode** dropdown, select between `non_persistent` and `persistent`:
@@ -287,6 +294,9 @@ This section demonstrates how to create a rule for forwarding data from a Rabbit
     | metadata   | Rule ID information                                          |
     | timestamp  | The timestamp when the message arrives at EMQX               |
     | node       | The name of the EMQX node where the message arrives          |
+    | queue      | The queue where the message from                             |
+    | exchange   | The exchange where the message from                          |
+    | routing_key | The routing key of this message                             |
 
 
 By now, you have completed the creation of the RabbitMQ Source, but the subscribed data will not be published directly to EMQX. Next, continue to create a message republish action, through which the Source's messages will be forwarded to EMQX.
