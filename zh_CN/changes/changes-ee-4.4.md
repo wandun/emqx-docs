@@ -13,7 +13,7 @@
 
 - 优化热配置模块中重启监听器的逻辑。
 
-  此后，在用户启动或重启热配置模块时，即使检查到 `mnesia` 表中的监听器配置有更新，监听器也不会重启。
+  优化后，在用户启动或重启热配置模块时，即使检查到 `mnesia` 表中的监听器配置有更新，监听器也不会重启。
   EMQX 将会打印如下日志提示用户手动重启监听器：
 
   ```
@@ -26,7 +26,7 @@
 
 - 添加 Amazon Linux 2023 安装包的支持。
 
-- 现在批量模式下的 MySQL 和 PostgresQL 动作也支持 `ON DUPLICATE KEY UPDATE` 或 `ON CONFLICT DO NOTHING` 语句了。
+- 现在批量模式下的 MySQL 和 PostgresQL 动作也支持 `ON DUPLICATE KEY UPDATE` 或 `ON CONFLICT DO NOTHING` 语句。
 
   若希望在主键冲突时避免插入重复数据，可以使用如下语句：
 

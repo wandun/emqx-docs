@@ -11,9 +11,9 @@
   + `Message Delivery Timeout`: defaults to 30 seconds. If the time taken to deliver a QoS1 or QoS2 message exceeds this value, the message will be discarded.
   + `Max Message Retry Count`: defaults to 3. If an ACK is not received within the retransmission interval, the message will be retransmitted, with the maximum number of retransmissions not exceeding this value.
 
-- Optimized the logic for restarting listeners in the hot configuration module.
+- Optimized the logic for restarting listeners in the Hot configuration module.
 
-  Now, when the user starts/restarts the hot configuration module, even if EMQX detects that the listener configuration in the `mnesia` table has been updated, the listener will not restart.
+  Now, when the user starts/restarts the Hot configuration module, even if EMQX detects that the listener configuration in the `mnesia` table has been updated, the listener will not restart.
   EMQX will print the following log to prompt the user to manually restart the listener:
 
   ```
@@ -62,7 +62,7 @@
   {undef,[{gen_rpc_auth,connect_with_auth,[gen_rpc_driver_tcp,'emqx@10.0.1.1',5370],[]}, ...]}
   ```
 
-- Fixed an issue where a 500 error was returned when the username quota module was not enabled and the HTTP API attempted to retrieve user information.
+- Fixed an issue where a 500 error was returned when the Username Quota module was not enabled and the HTTP API attempted to retrieve user information.
 
 - Fixed an issue where the `emqx_mod_acl_internal` hook was mounted repeatedly after importing backup files from older versions.
 
