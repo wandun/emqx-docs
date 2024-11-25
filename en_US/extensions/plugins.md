@@ -1,13 +1,6 @@
 # Plugins
 
-EMQX allows users to customize the business logic or implement other protocols using plugins written in Erlang. This page introduces how to develop a customized plugin.
-
-The basic process of plugin development and operation is as follows:
-
-- Download and install our [rebar3 emqx-plugin template](https://github.com/emqx/emqx-plugin-template).
-- Generate the corresponding plugin tarball using the plugin template provided by EMQX.
-- Install the plugin package via Dashboard or CLI.
-- Start/stop/uninstall your plugin via Dashboard or CLI.
+EMQX allows users to customize the business logic or implement other protocols using plugins written in Erlang. This page introduces how to develop, install, and maintain a customized plugin.
 
 :::tip Prerequisite
 
@@ -16,7 +9,7 @@ Knowledge of EMQX [hooks](./hooks.md)
 
 ## Develop EMQX Plugins
 
-This section provides a step-by-step guide on developing custom EMQX plugins, using the creation of an access control plugin as an example.
+Developing plugins involves downloading and installing our [rebar3 emqx-plugin template](https://github.com/emqx/emqx-plugin-template) and generating the corresponding plugin tarball using the plugin template provided by EMQX. This section provides a step-by-step guide on developing custom EMQX plugins, using the creation of an access control plugin as an example.
 
 ### Download and Install the rebar3 Plugin Template
 
@@ -331,7 +324,13 @@ The following are several example snippets. For more detailed examples, refer to
 
 Including Avro Schema and i18n files in your plugin package ensures they are incorporated during plugin compilation and packaging. You can use the `emqx_plugins:get_config/1,2,3,4` function in your plugin code to retrieve configuration settings.
 
-## Install and Launch the Plugin
+## Install and Launch a Plugin
+
+Once you have developed a plugin, you can install the plugin package via Dashboard or CLI.
+
+### Install a Plugin via Dashboard
+
+### Install a Plugin via CLI
 
 To install the compiled plugin package, use the command line interface (CLI) as follows:
 
@@ -339,7 +338,29 @@ To install the compiled plugin package, use the command line interface (CLI) as 
 ./bin/emqx ctl plugins install {pluginName}
 ```
 
-## Uninstall the Plugin
+### Location of Installed Files
+
+#### Beam files
+
+#### Config/schema files
+
+## Maintain a Plugin
+
+This section introduces how to start, stop and uninstall your plugin via Dashboard or CLI.
+
+### Start and Stop a Plugin
+
+### Upgrade a Plugin
+
+### Configure a Plugin
+
+#### Configure via Enterprise Dashboard
+
+#### Configure via CLI
+
+#### Configure via API
+
+### Uninstall a Plugin
 
 When the plugin is no longer needed, you can uninstall it using the CLI with this command:
 
