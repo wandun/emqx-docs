@@ -324,7 +324,7 @@ The following are several example snippets. For more detailed examples, refer to
 
 Including Avro Schema and i18n files in your plugin package ensures they are incorporated during plugin compilation and packaging. You can use the `emqx_plugins:get_config/1,2,3,4` function in your plugin code to retrieve configuration settings.
 
-## Install and Launch a Plugin
+## Install and Uninstall a Plugin
 
 Once you have developed a plugin, you can install the plugin package via Dashboard or CLI.
 
@@ -344,6 +344,16 @@ To install the compiled plugin package, use the command line interface (CLI) as 
 
 #### Config/schema files
 
+### Uninstall a Plugin
+
+When the plugin is no longer needed, you can uninstall it using the CLI with this command:
+
+```bash
+./bin/emqx ctl plugins uninstall {pluginName}
+```
+
+<!-- **Note**: (EMQX enterprise) Plugins need to be reinstalled after hot upgrades. -->
+
 ## Maintain a Plugin
 
 This section introduces how to start, stop and uninstall your plugin via Dashboard or CLI.
@@ -359,13 +369,3 @@ This section introduces how to start, stop and uninstall your plugin via Dashboa
 #### Configure via CLI
 
 #### Configure via API
-
-### Uninstall a Plugin
-
-When the plugin is no longer needed, you can uninstall it using the CLI with this command:
-
-```bash
-./bin/emqx ctl plugins uninstall {pluginName}
-```
-
-<!-- **Note**: (EMQX enterprise) Plugins need to be reinstalled after hot upgrades. -->
