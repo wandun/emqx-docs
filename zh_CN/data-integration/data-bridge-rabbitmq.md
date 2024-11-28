@@ -159,7 +159,15 @@ docker run -it --rm --name rabbitmq -p 127.0.0.1:5672:5672 -p 127.0.0.1:15672:15
 
    * **路由键**: 输入之前创建的 `test_routing_key`，用于将消息路由到 RabbitMQ 交换中的正确队列。
 
-   * 在 **消息传递模式**下拉框中选择 `non_persistent` 或 `persistent`：
+     ::: tip
+
+     **交换机**和**路由健**支持配置为模板值，可以使用占位符从接收到的 MQTT 消息 payload 中提取值，从而实现动态路由。例如，可以根据 payload 中的某个字段动态设置**路由健**，将其配置为 `${payload.akey}`，从 payload 中提取 `akey` 字段的值并作为路由键。
+
+     **注意**：在批量模式下，**交换机**和**路由健**的模板值必须在批次中的所有消息中保持一致，以确保路由的统一性并避免批处理过程中出现冲突。 
+
+     :::
+
+   * 在**消息传递模式**下拉框中选择 `non_persistent` 或 `persistent`：
 
      * `non_persistent` （默认选项）：消息不会持久化到磁盘，如果 RabbitMQ 重新启动或崩溃，消息可能会丢失。
 
@@ -253,7 +261,7 @@ docker run -it --rm --name rabbitmq -p 127.0.0.1:5672:5672 -p 127.0.0.1:15672:15
 
 5. 在**添加输入**弹出框中，**输入类型**下拉选择 `RabbitMQ`。保持 **Source** 下拉框为默认的`创建 Source`选项，此示例将创建一个全新的 Source 并添加到规则中。
 
-6. 为 Source 输入 **名称** 和 **描述**（可选）。名称应该是大小写字母和数字的组合，例如 `my-rabbitmq-source`。
+6. 为 Source 输入**名称**和**描述**（可选）。名称应该是大小写字母和数字的组合，例如 `my-rabbitmq-source`。
 
 7. 在**连接器**下拉框中选择之前创建的 `my-rabbitmq` 连接器。您也可以点击下拉框旁边的创建按钮，在弹出框中快捷创建新的连接器，所需的配置参数按照参照[创建连接器](#创建连接器)。
 
@@ -276,13 +284,16 @@ docker run -it --rm --name rabbitmq -p 127.0.0.1:5672:5672 -p 127.0.0.1:15672:15
 
     规则 SQL 可以从 RabbitMQ Source 中获取以下字段，您可以调整 SQL 进行数据处理操作。此处使用默认 SQL 即可。
 
-    | 字段名称  | 描述                                               |
-    | :-------- | :------------------------------------------------- |
-    | payload   | RabbitMQ 消息内容                                  |
-    | event     | 事件主题，格式为 `$bridges/rabbitmq:<source 名称>` |
-    | metadata  | 规则 ID 信息                                       |
-    | timestamp | 消息到达 EMQX 的时间戳                             |
-    | node      | 消息到达 EMQX 的节点名称                           |
+    | 字段名称    | 描述                                               |
+    | :---------- | :------------------------------------------------- |
+    | payload     | RabbitMQ 消息内容                                  |
+    | event       | 事件主题，格式为 `$bridges/rabbitmq:<source 名称>` |
+    | metadata    | 规则 ID 信息                                       |
+    | timestamp   | 消息到达 EMQX 的时间戳                             |
+    | node        | 消息到达 EMQX 的节点名称                           |
+    | queue       | 从中消费消息的队列名称                             |
+    | exchange    | 消息被路由的交换机名称                             |
+    | routing_key | 用于将消息从交换机路由到队列的路由键               |
 
 至此，您已经完成了 RabbitMQ Source 的创建，但订阅到的数据并不会直接发布到 EMQX 本地。接下来将继续创建一个消息重发布动作，通过它将 Source 的消息转发到 EMQX 本地。
 
