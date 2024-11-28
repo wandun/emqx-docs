@@ -2,8 +2,6 @@
 
 CoAP 网关以 [Publish-Subscribe Broker for the CoAP](https://datatracker.ietf.org/doc/html/draft-ietf-core-coap-pubsub-09) 为标准，实现了发布、订阅、和消息接收功能。
 
-出于安全性的考虑，CoAP 网关实现了 **连接模式** 以提供客户端接入认证功能来限制未授权的 CoAP 客户端接入系统。
-
 ## 快速开始
 
 EMQX 5.0 可以通过 Dashboard 配置并启用 CoAP 网关。
@@ -67,9 +65,10 @@ CoAP 网关支持 UDP、DTLS 类型的监听器，其完整可配置的参数列
 ## 工作模式
 
 CoAP 网关支持 2 种工作模式：
-- `无连接模式`：该模式完全遵循 [Publish-Subscribe Broker for the CoAP](https://datatracker.ietf.org/doc/html/draft-ietf-core-coap-pubsub-09) 协议，在该模式下不需要连接认证、会话、心跳维持等操作，仅支持：
+- `无连接模式`：该模式完全遵循 [Publish-Subscribe Broker for the CoAP](https://datatracker.ietf.org/doc/html/draft-ietf-core-coap-pubsub-09) 协议，在该模式下不需要连接创建会话、心跳维持等操作，仅支持：
   * 消息发布
   * 订阅主题
+  * 认证
 
 - `连接模式`：该模式下定义了连接认证、会话、和心跳维持等概念。客户端在发布订阅前需要先创建连接，成功连接后客户端将获得会话令牌(Token)，在后续的通信中都需要在 Query String 加入令牌信息。它实现了如下功能:
   * 创建连接
@@ -96,7 +95,6 @@ gateway.coap {
 
 ## 认证
 
-仅在 `连接模式` 下可用。
 客户端 ID、用户名、密码由客户端的[创建连接](#创建连接)请求提供，CoAP 网关支持以下认证器类型：
 
 - [内置数据库认证](../access-control/authn/mnesia.md)

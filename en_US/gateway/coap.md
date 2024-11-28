@@ -2,8 +2,6 @@
 
 The CoAP gateway in EMQX enables you to implement publish, subscribe, and receive messages as standard with the [Publish-Subscribe Broker for the CoAP](https://datatracker.ietf.org/doc/html/draft-ietf-core-coap-pubsub-09) protocol.
 
-To ensure secure communication, the CoAP gateway includes the **Connection Mode** feature which provides client access authentication. This feature restricts unauthorized CoAP clients from accessing the system, thus enhancing security and preventing potential attacks. 
-
 Below is the feature list supported in connection mode and connectionless mode.
 
 | Feature           | Connectionless Mode | Connection Mode |
@@ -156,12 +154,6 @@ Click **Add Listener** to open **Add Listener** page, where you can continue wit
 You can set whether to enable the TLS Verify by setting the toggle switch. But before that, you need to configure the related **TLS Cert**, **TLS Key**, and **CA Cert** information, either by entering the content of the file or uploading with the **Select File** button. For details, see [Enable SSL/TLS Connection](https://docs.emqx.com/en/enterprise/v5.0/network/emqx-mqtt-tls.html).
 
 ### Configure Authentication
-
-::: tip
-
-The authentication configuration only takes effect in connection mode, that is, **Connection Required** is set to true.
-
-:::
 
 The client ID, username, and password are provided by the client's [Create Connection](#create-connection) request. The CoAP gateway supports the following authenticator types:
 
