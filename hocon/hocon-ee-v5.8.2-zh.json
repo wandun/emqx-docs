@@ -9243,7 +9243,7 @@
               "default" : "\"15m\""
             },
             {
-              "doc" : "选择节点的角色。<br/>\n<code>core</code> 节点提供数据的持久性，并负责写入。建议将核心节点放置在不同的机架或不同的可用区。<br/>\n<code>repliant</code> 节点是临时工作节点。 从集群中删除它们，不影响数据库冗余<br/>\n建议复制节点多于核心节点。<br/>\n注意：该参数仅在设置<code>backend</code>时生效到 <code>rlog</code>。",
+              "doc" : "选择节点的角色。<br/>\n<code>core</code> 节点提供数据的持久性，并负责写入。建议将核心节点放置在不同的机架或不同的可用区。<br/>\n<code>replicant</code> 节点是临时工作节点。 从集群中删除它们，不影响数据库冗余<br/>\n建议复制节点多于核心节点。<br/>\n注意：该参数仅在设置<code>backend</code>时生效到 <code>rlog</code>。",
               "hash" : "V-node-S-node-role",
               "aliases" : [
                 "db_role"
