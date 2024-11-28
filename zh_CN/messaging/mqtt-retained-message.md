@@ -34,7 +34,7 @@ EMQX 实现了 MQTT 的保留消息功能。您可以将某个特定主题下发
 3. 发布两条主题为 `sensor/t2` 的保留消息。
 
    - 输入 `1` 作为第一条消息内容。选中 **Retain**。点击发送按钮。
-   - 输入 `2` 作为第二条消息内容。点击发送按钮。
+   - 输入 `2` 作为第二条消息内容。选中 **Retain**。点击发送按钮。
 
    <img src="./assets/retain-message-send-2.png" alt="retain-message-send-2" style="zoom:35%;" />
 
