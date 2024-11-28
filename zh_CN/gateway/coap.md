@@ -65,7 +65,7 @@ CoAP 网关支持 UDP、DTLS 类型的监听器，其完整可配置的参数列
 ## 工作模式
 
 CoAP 网关支持 2 种工作模式：
-- `无连接模式`：该模式完全遵循 [Publish-Subscribe Broker for the CoAP](https://datatracker.ietf.org/doc/html/draft-ietf-core-coap-pubsub-09) 协议，在该模式下不需要连接创建连会话、心跳维持等操作，仅支持：
+- `无连接模式`：该模式完全遵循 [Publish-Subscribe Broker for the CoAP](https://datatracker.ietf.org/doc/html/draft-ietf-core-coap-pubsub-09) 协议，在该模式下不需要连接创建会话、心跳维持等操作，仅支持：
   * 消息发布
   * 订阅主题
   * 认证
